@@ -5,3 +5,8 @@ __pycache__/
 .DS_Store
 *.pyc
 .streamlit/secrets.toml
+
+# Facilitator-only — keep locally, never publish
+**/instructor.html
+tutorials/eliciation2/LecturePlan_90min_Elicitation.pdf
+tutorials/eliciation2/build_onepager.py

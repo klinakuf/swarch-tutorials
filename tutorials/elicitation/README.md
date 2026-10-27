@@ -5,12 +5,7 @@ A browser-based elicitation exercise (missed exams). No install required.
 | File | Audience |
 | --- | --- |
 | [`index.html`](index.html) | Student page — project this |
-| [`instructor.html`](instructor.html) | Instructor sheet |
 
-Open either file in a browser, or serve the folder locally:
+Open in a browser, or via the course site: https://klinakuf.github.io/swarch-tutorials/tutorials/elicitation/
 
-```bash
-python3 -m http.server --directory tutorials/elicitation
-```
-
-Then visit `http://localhost:8000/`.
+Facilitator notes stay local only (`instructor.html`, not published).
