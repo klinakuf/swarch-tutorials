@@ -1,6 +1,6 @@
 # Elicitation techniques (Software Architecture · University of Stuttgart)
 
-In-class pack after the missed-exams lab. Recap, two check questions, group techniques board. Specification is a separate tutorial: [`../specification/`](../specification/).
+In-class pack after the missed-exams lab. Recap, two check questions, group techniques board.
 
 | File | Use |
 | --- | --- |

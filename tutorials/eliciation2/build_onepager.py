@@ -71,7 +71,7 @@ def main():
     c.setFillColor(MUTED)
     c.setFont("Helvetica", 8)
     c.drawString(left, height - 20 * mm, "Follow-up to the missed-exams lab  ·  Artifacts: tutorials/eliciation2/")
-    c.drawRightString(right, height - 20 * mm, "Specification = next tutorial")
+    c.drawRightString(right, height - 20 * mm, "One pager")
 
     y = height - 33 * mm
 
@@ -102,7 +102,7 @@ def main():
         ("8–22", "Two checks", "Project index.html. Room votes. Q1 introspection → C. Q2 ground truth → C. Discuss distractors briefly."),
         ("22–40", "Group work", "Assign G1–G6 one technique each. Draft pros / cons / suited context (~15–18 min)."),
         ("40–75", "Board debrief", "Scribe into board.html; project the summary table. Compare contexts. Sample answers only after their round."),
-        ("75–90", "Close", "Two takeaways + export board JSON if useful. Announce next time: specification tutorial (tutorials/specification/)."),
+        ("75–90", "Close", "Two takeaways + export board JSON if useful. Point to the filled technique table as the session artifact."),
     ]
 
     row_h = 12.2 * mm
@@ -193,7 +193,7 @@ def main():
     closes = [
         "Elicitation chooses sources and techniques — no single technique is enough.",
         "Hard data and introspection both mislead when they skip the problem space.",
-        "Next: specification (tutorials/specification/) — shall + fit criterion, Volere-lite.",
+        "The filled technique table (pros / cons / context) is the session artifact.",
     ]
     for line in closes:
         c.setFillColor(TEAL)
