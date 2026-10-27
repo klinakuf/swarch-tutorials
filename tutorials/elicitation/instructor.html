@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Instructor sheet · Missed exams</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    ::selection { background: #d5ebe4; }
+    a { color: var(--teal-deep); }
+    .wrap {
+      width: min(820px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 2.2rem 0 4rem;
+    }
+    .kicker {
+      margin: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0.35rem 0 0.6rem;
+    }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.7rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin: 0 0 0.8rem;
+    }
+    h3 { margin: 0; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .lede { font-size: 1.15rem; max-width: 40rem; margin: 0 0 1.2rem; }
+    .private {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--rust);
+      border-radius: 0 12px 12px 0;
+      padding: 0.8rem 1rem;
+      margin: 0 0 1.4rem;
+    }
+    .map {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem 1.15rem 1.1rem;
+      margin: 0 0 1.1rem;
+    }
+    .map h2 { font-size: 1.35rem; margin-bottom: 0.45rem; }
+    .map ul { margin: 0.3rem 0 0; padding-left: 1.15rem; }
+    .map li { margin: 0.25rem 0; }
+    .times {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem;
+    }
+    .times li {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.28rem 0.7rem;
+      font-size: 0.92rem;
+    }
+    .beat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.2rem 1.2rem 0.4rem;
+      margin: 0 0 1.1rem;
+    }
+    .beat-kicker {
+      margin: 0 0 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+    }
+    .move { border-top: 1px solid var(--line); padding: 0.9rem 0 1rem; }
+    .move h3.challenge { color: var(--ink); }
+    .move h3.discuss { color: var(--blue); }
+    .move h3.aha, .move h3.reveal { color: var(--teal-deep); }
+    .say, .listen, .press, .land { margin: 0.45rem 0 0; }
+    .say { color: var(--muted); font-size: 0.95rem; }
+    blockquote {
+      margin: 0.45rem 0 0;
+      padding: 0.15rem 0 0.15rem 0.85rem;
+      border-left: 3px solid var(--line);
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      line-height: 1.35;
+    }
+    .listen { font-size: 1.02rem; }
+    .press { margin-top: 0.7rem; font-size: 0.95rem; color: var(--muted); }
+    .press b {
+      color: var(--ink);
+      font-weight: 650;
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 0.1rem 0.5rem;
+    }
+    .land { font-family: var(--serif); font-size: 1.28rem; line-height: 1.35; }
+    .counts { list-style: none; padding: 0; margin: 0.6rem 0 0; }
+    .counts li {
+      display: grid;
+      grid-template-columns: 3.2rem 1fr;
+      gap: 0.7rem;
+      align-items: baseline;
+      margin: 0 0 0.45rem;
+    }
+    .counts b {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .n41 { color: var(--teal-deep); }
+    .n19 { color: var(--blue); }
+    .n10 { color: var(--rust); }
+    .two { display: grid; gap: 0.7rem; margin-top: 0.7rem; }
+    @media (min-width: 700px) { .two { grid-template-columns: 1fr 1fr; } }
+    .two article { background: var(--paper); border-radius: 12px; padding: 0.8rem 0.9rem; }
+    .two h4 {
+      margin: 0.15rem 0 0.3rem;
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .two p, .two .num { margin: 0; }
+    .two .num {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+    .names { display: flex; flex-wrap: wrap; gap: 0.35rem; list-style: none; padding: 0; margin: 0.5rem 0 0; }
+    .names li {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .keep { list-style: none; padding: 0; margin: 0.4rem 0 0; }
+    .keep li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.7rem;
+      align-items: baseline;
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1.35;
+      margin: 0 0 0.55rem;
+    }
+    .keep span { color: var(--teal-deep); font-weight: 600; }
+    .cut { color: var(--muted); }
+    .picture {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0.8rem 0 0.2rem;
+    }
+    @media (min-width: 700px) {
+      .picture.two {
+        grid-template-columns: 0.8fr 1.2fr;
+        grid-template-areas: "room solution" "problem solution";
+      }
+      .picture.two .room-note { grid-area: room; }
+      .picture.two .solution { grid-area: solution; }
+      .picture.two .problem { grid-area: problem; }
+    }
+    .panel {
+      border-radius: 14px;
+      padding: 0.75rem 0.9rem 0.85rem;
+      background: var(--paper);
+    }
+    .panel.problem { border: 2px dashed var(--teal); }
+    .panel.solution { border: 2px solid #c2410c; }
+    .panel .eyebrow, .source .eyebrow {
+      margin: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .panel.problem .eyebrow { color: var(--teal-deep); }
+    .panel.solution .eyebrow { color: var(--rust); }
+    .panel p { margin: 0.3rem 0 0; }
+    .glyphs { display: flex; gap: 0.7rem; list-style: none; padding: 0; margin: 0.45rem 0 0; }
+    .glyphs li { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+    .room-note {
+      background: var(--ink);
+      color: #f6f3ec;
+      border-radius: 14px;
+      padding: 0.75rem 0.9rem;
+    }
+    .room-note p { margin: 0.15rem 0 0; font-family: var(--serif); font-size: 1.25rem; }
+    .stackbar {
+      display: flex;
+      height: 3.2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 0.7rem 0 0.3rem;
+    }
+    .stackbar div {
+      display: grid;
+      place-items: center;
+      color: white;
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .s41 { background: var(--teal); flex: 41; }
+    .s19 { background: var(--blue); flex: 19; }
+    .s10 { background: #c2410c; flex: 10; }
+    .balance {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      align-items: start;
+      margin: 0.6rem 0 0.2rem;
+    }
+    .pan {
+      background: var(--paper);
+      border-radius: 14px;
+      padding: 0.7rem 0.8rem 0.8rem;
+    }
+    .pan.up { border-top: 6px solid var(--teal); }
+    .pan.down { border-top: 6px solid var(--rust); margin-top: 1.6rem; }
+    .pan b { display: block; font-family: var(--serif); font-size: 1.45rem; font-weight: 600; }
+    .pan.up b { color: var(--teal-deep); }
+    .pan.down b { color: var(--rust); }
+    .pan span { color: var(--muted); font-size: 0.92rem; }
+    .pivot {
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 13px solid var(--ink);
+      margin-bottom: 0.4rem;
+    }
+    @media print {
+      body { background: white; }
+      .wrap { width: auto; padding: 0; }
+      .beat, .private, .map { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="kicker">Instructor sheet · keep this screen</p>
+    <h1>Missed exams</h1>
+    <p class="lede">Project <a href="index.html">the student page</a>. This sheet uses the elicitation lecture’s terms: problem space, stakeholder, source, business goal, requirement, introspection, hard data, conflict of objectives, negotiation.</p>
+    <p class="private"><strong>Do not project this page.</strong> It contains the hard data. Their page starts from the email.</p>
+
+    <section class="map">
+      <h2>What this session is</h2>
+      <ul>
+        <li>Elicitation identifies the <em>problem space</em>. A reminder is already in the <em>solution space</em>.</li>
+        <li>Technique 1, traditional: <em>introspection</em>. The room elicits from itself.</li>
+        <li>Technique 2, traditional: <em>analyzing hard data</em>. A source of requirements besides the stakeholder who wrote.</li>
+        <li>Then a <em>stakeholder analysis</em>: who a decision influences positively, and who negatively.</li>
+        <li><em>Negotiation</em> is the activity that follows. The room makes the conflict visible. It does not pick a winner.</li>
+      </ul>
+    </section>
+    <section class="map">
+      <h2>Leave these for another session</h2>
+      <ul>
+        <li>The rest of the technique list: interviews, focus groups, prototyping, site visits. You may name them. You do not run them.</li>
+        <li>The importance/influence quadrants, as a diagram the students draw. A note for you is in beat 3.</li>
+        <li>ISO/IEC 25010 as a checklist exercise. One connection is in beat 1, if the room needs it.</li>
+        <li>Specification and validation. Negotiation is named today, as the further elicitation activity, and it is not performed.</li>
+      </ul>
+    </section>
+
+    <ul class="times">
+      <li>1 Scope · 14 min</li>
+      <li>2 Causes · 14 min</li>
+      <li>3 Conflict · 12 min</li>
+      <li>The next source · 5 min</li>
+    </ul>
+
+    <section class="beat">
+      <p class="beat-kicker">Before anyone writes</p>
+      <h2>One stakeholder, then silence.</h2>
+      <div class="move">
+        <p class="say">Say this, then stop talking.</p>
+        <blockquote>This email is the only source you have. Five lines. What the system must do. No technology names. Hard data that tests your lines is on the back. You will not see it until you lock.</blockquote>
+        <p class="press">Their button: <b>Write five lines</b></p>
+      </div>
+    </section>
+
+    <section class="beat" id="scope">
+      <p class="beat-kicker">1 · Introspection · about 14 minutes</p>
+      <h2>That was introspection.</h2>
+      <div class="move">
+        <h3 class="challenge">Challenge · 8 minutes, in silence</h3>
+        <p class="listen">Do not name the technique yet. Walk and read. You are looking for solutions: reminders, calendars, notifications. A line that stays in the problem space, and says what missing an exam means, is the line to protect. Leave it alone.</p>
+        <p class="press">The button stays off until five lines are written. Then <b>Lock these five lines</b>. After that, the lines cannot be edited.</p>
+      </div>
+      <div class="move">
+        <h3 class="discuss">Discuss · 4 minutes</h3>
+        <p class="say">One question. They mark each line: solution, problem space, or something else.</p>
+        <blockquote>How many lines are already solutions? How many stay in the problem space and say what missing an exam means?</blockquote>
+        <p class="listen">Count the solution pile out loud. If a group marked none, ask them to read the line that names the problem. Do not correct it yet.</p>
+        <p class="listen">If someone wrote “the system shall be reliable” or “user-friendly,” that is the bad example from the quantifiable-requirements slide. The email’s sentence has the same shape. The business goal is closer to quality in use, effectiveness, than to a function. Say that only if the room needs the link. Do not open ISO/IEC 25010.</p>
+        <p class="press">Then <b>Discussion done</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="aha">Aha</h3>
+        <p class="land">Introspection is an elicitation technique. It collects what this room already believes. The email states a business goal, not a requirement. A reminder is a solution. Elicitation identifies the problem space.</p>
+        <div class="picture two" aria-hidden="true">
+          <div class="room-note"><p class="eyebrow" style="color:#b7ddd4">Introspection</p><p>This room</p></div>
+          <div class="panel solution"><p class="eyebrow">Solution space</p><ul class="glyphs"><li>Reminder</li><li>Calendar</li><li>Notification</li></ul></div>
+          <div class="panel problem"><p class="eyebrow">Problem space</p><p>What missing an exam means. The arrow does not reach here.</p></div>
+        </div>
+        <p class="press">Then <b>Turn the sheet over</b>. Read the counts on their screen. Do not interpret them yet.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="causes">
+      <p class="beat-kicker">2 · Hard data · about 14 minutes</p>
+      <h2>A second source.</h2>
+      <div class="move">
+        <h3 class="reveal">Reveal · analyzing hard data</h3>
+        <p class="say">Name the technique, then read the three numbers, then stop. The email was one stakeholder. This is another source.</p>
+        <div class="stackbar" role="img" aria-label="41, 19, and 10, as shares of 70">
+          <div class="s41">41</div>
+          <div class="s19">19</div>
+          <div class="s10">10</div>
+        </div>
+        <ul class="counts">
+          <li><b class="n41">41</b><span>were in a room the exam scheduler had changed that morning.</span></li>
+          <li><b class="n19">19</b><span>had two exams in the same hour. The exam scheduler allowed it.</span></li>
+          <li><b class="n10">10</b><span>said they forgot, or gave no answer.</span></li>
+        </ul>
+        <p class="listen">Say: a requirement is a condition or capability you can check. “Students stop missing their exams” is a business goal. These counts are what you may use to split it.</p>
+        <p class="press">Then <b>Revise the lines</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="challenge">Challenge · 6 minutes</h3>
+        <p class="listen">They cross out every line the hard data does not support. At most two new lines. A new line has to be a condition for the 41 or the 19. The page gives the 10 no slot.</p>
+        <p class="listen">If someone wants a function for the 10, ask which of the 60 that condition would have changed. The 10 are a real event. Elicit the 60 first.</p>
+        <p class="listen">A group that has done the thinking has lines crossed out, or a new line tagged 41 or 19. A group that kept every reminder is still in the solution space. Ask them which event the line would change.</p>
+        <p class="press">Then <b>Lock the revision</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="discuss">Discuss · 4 minutes</h3>
+        <p class="say">One question. Both answers are allowed.</p>
+        <blockquote>Is the business goal still one requirement?</blockquote>
+        <p class="listen">Take one voice for “still one requirement,” and one for “several requirements.” Do not award either. A requirement, in the lecture’s definition, is a condition or capability needed to solve a problem or achieve an objective, and it has to be checkable.</p>
+        <p class="press">Then <b>Discussion done</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="aha">Aha</h3>
+        <p class="land">Forgot is the story everyone can picture, and it is the smallest pile. The business goal can stay in the email. It is not yet one requirement. A notification is a function in the solution space. It meets neither condition.</p>
+        <div class="two">
+          <article>
+            <p class="num n41">41</p>
+            <h4>A checkable condition</h4>
+            <p>The student and the exam supervisor are shown the same time and the same room. Two sources had disagreed.</p>
+          </article>
+          <article>
+            <p class="num n19">19</p>
+            <h4>A constraint</h4>
+            <p>A student is not given two exams in the same hour. The exam scheduler was allowed to break it.</p>
+          </article>
+        </div>
+        <p class="press">Then <b>Name who is influenced</b>.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="conflict">
+      <p class="beat-kicker">3 · Stakeholder analysis · about 12 minutes</p>
+      <h2>Positively, and negatively.</h2>
+      <div class="move">
+        <h3 class="challenge">Challenge · 6 minutes</h3>
+        <p class="say">A stakeholder has an interest: they use the product, manage it, or are affected by its use. The lecture’s question is which of them a decision influences positively, and which negatively.</p>
+        <div class="balance" aria-hidden="true">
+          <div class="pan up"><b>+</b><span>positively</span></div>
+          <div class="pan down"><b>−</b><span>negatively</span></div>
+        </div>
+        <ul class="names">
+          <li>Student</li>
+          <li>Exam supervisor</li>
+          <li>Exam office</li>
+          <li>Exam scheduler</li>
+        </ul>
+        <p class="listen">The exam supervisor is in the room, checking the list at the door. For the 41, their list and the student’s list did not share one time and one room.</p>
+        <p class="listen">The exam scheduler sets the times and rooms. They changed a room that morning, and they were allowed to put two exams in the same hour. The page refuses the same stakeholder on both sides. If a group is stuck, ask whose work gets harder if the line is kept. The scheduler is the name most rooms forget.</p>
+        <p class="listen">For you, not for the board: the student is high importance and little influence on the development, the quadrant that needs its interests protected. The exam scheduler can block the change. Do not draw the quadrant diagram unless the room asks how these four differ in influence.</p>
+        <p class="press">Then <b>Lock the pairs</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="discuss">Discuss · 4 minutes</h3>
+        <p class="say">One conflict. Positively, negatively, then the line.</p>
+        <blockquote>Read the two stakeholders. Stop before you propose a solution.</blockquote>
+        <p class="listen">A solution means they have left the conflict. Bring them back to the two names. This is a conflict of objectives, one of the challenges on the elicitation slides.</p>
+        <p class="press">Then <b>We read this conflict</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="aha">Aha</h3>
+        <p class="land">Use their pair. One stakeholder is influenced positively if the line is kept. The other is influenced negatively. That conflict of objectives is the finding.</p>
+        <p class="land">The exam office can look successful while students still sit in the wrong room, when missed is counted at the door and the exam scheduler never sees the correction.</p>
+        <p class="land">Negotiation starts from this conflict. Do not negotiate it now, and do not choose whose interest wins. Which interest the architecture will serve is a later decision. It is not a decision the email can make.</p>
+        <p class="press">Then <b>Ask the next source</b>.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="question">
+      <p class="beat-kicker">The next source · about 5 minutes</p>
+      <h2>One stakeholder was not enough.</h2>
+      <div class="move">
+        <h3 class="challenge">Challenge</h3>
+        <p class="listen">Elicitation continues by identifying the next stakeholder or the next source. A strong question names a distinction: what gets counted as missed, or which source the exam supervisor trusts. A question that asks for “the requirements” is the business goal coming back. Ask them to name the distinction. Do not supply a model question.</p>
+        <p class="listen">Read two questions aloud. Then <b>Send this question</b>.</p>
+      </div>
+      <div class="move">
+        <h3 class="aha">Leave these up</h3>
+        <ol class="keep">
+          <li><span>1</span>Introspection does not identify the problem space.</li>
+          <li><span>2</span>A requirement is a condition the hard data can check.</li>
+          <li><span>3</span>A decision influences stakeholders positively and negatively.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="beat">
+      <p class="beat-kicker">If the slot is short</p>
+      <h2>Keep the conflict. Shorten the writing.</h2>
+      <div class="move">
+        <p class="cut">One new line is enough in the revision. One conflict is enough in the stakeholder analysis. Two spoken questions are enough at the end. The finding is the conflict of objectives, so that discussion stays.</p>
+        <p class="cut">You do not need five correct requirements. Lines crossed out, two different stakeholders, and one condition the counts can check: that is the check.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

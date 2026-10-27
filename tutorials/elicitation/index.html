@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>One sentence, three causes</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --paper-2: #e7e1d6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --faint: #8a8175;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --bar-rust: #c2410c;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    html { scroll-behavior: auto; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+      padding-bottom: 7.5rem;
+    }
+
+    ::selection { background: #d5ebe4; }
+    :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    button, textarea, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: rgba(243, 239, 230, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top-inner, .dock-inner {
+      width: min(1040px, calc(100% - 2.5rem));
+      margin: 0 auto;
+    }
+    .top-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem 1.25rem;
+      min-height: 4.4rem;
+      padding: 0.7rem 0;
+    }
+    .kicker, .name, .phase { margin: 0; }
+    .kicker {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .name {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+    .status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem 1rem;
+    }
+    .phase {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .phase[data-kind="challenge"] { color: var(--ink); }
+    .phase[data-kind="discuss"] { color: var(--blue); }
+    .phase[data-kind="aha"],
+    .phase[data-kind="reveal"],
+    .phase[data-kind="keep"] { color: var(--teal-deep); }
+    .phase[data-kind="brief"] { color: var(--muted); }
+
+    .cycles {
+      display: flex;
+      gap: 0.3rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .cycles li {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--faint);
+      padding: 0.28rem 0.6rem;
+      border-radius: 999px;
+    }
+    .cycles li.now {
+      color: var(--ink);
+      background: var(--card);
+      box-shadow: inset 0 0 0 1.5px var(--ink);
+    }
+    .cycles li.done { color: var(--teal-deep); background: #e5f3ef; }
+
+    #reset {
+      background: none;
+      border: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.35rem 0.2rem;
+    }
+
+    main {
+      width: min(760px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 1.8rem 0 1rem;
+    }
+    body[data-short="yes"] main {
+      min-height: calc(100dvh - 12.5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      justify-content: safe center;
+    }
+    body[data-wide="yes"] main {
+      width: min(1040px, calc(100% - 2.5rem));
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(2.05rem, 4.4vw, 3.15rem);
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin: 0 0 0.75rem;
+      max-width: 14em;
+    }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0.15rem 0 0.35rem;
+    }
+    .lede, .statement {
+      font-size: 1.18rem;
+      line-height: 1.45;
+      margin: 0 0 1.2rem;
+      max-width: 38rem;
+    }
+    .statement {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+      line-height: 1.32;
+      max-width: 28em;
+    }
+    .principle {
+      margin: 1.6rem 0 0;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      line-height: 1.35;
+      max-width: 26em;
+    }
+    .aside {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 38rem;
+    }
+
+    .email {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(60, 42, 12, 0.05);
+    }
+    .email.full {
+      position: relative;
+      overflow: hidden;
+      padding: 1.35rem 1.6rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .email .from {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-right: 4.75rem;
+    }
+    .email .from strong { color: var(--ink); font-weight: 600; }
+    .email .ask {
+      font-family: var(--serif);
+      font-size: clamp(1.55rem, 3vw, 2.15rem);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: 0.85rem 0 0.45rem;
+    }
+    .email .ask-2 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .email.mini { padding: 0.85rem 1.1rem; margin: 0 0 1.2rem; }
+    .email.mini .ask { font-size: 1.25rem; margin: 0; }
+    .dogear {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(225deg, var(--paper) 50%, #e3dacb 50%);
+    }
+    .fold { color: var(--muted); margin: 0 0 1.1rem; max-width: 38rem; }
+
+    .constraints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .constraints li {
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.7);
+      border-radius: 999px;
+      padding: 0.28rem 0.7rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .rules { display: flex; flex-direction: column; gap: 0.35rem; }
+    .rule {
+      display: grid;
+      grid-template-columns: 1.6rem 1fr;
+      gap: 0.55rem;
+      align-items: start;
+    }
+    .rule span {
+      font-variant-numeric: tabular-nums;
+      color: var(--faint);
+      padding-top: 0.55rem;
+      font-weight: 600;
+    }
+    textarea, .draft {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      border-radius: 0;
+      padding: 0.45rem 0.15rem 0.55rem;
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      line-height: 1.35;
+    }
+    textarea { resize: none; min-height: 3.3rem; }
+    .rule textarea { min-height: 2.55rem; padding-top: 0.15rem; padding-bottom: 0.35rem; }
+    textarea:focus, .draft:focus { outline: none; border-bottom-color: var(--ink); }
+    #question {
+      min-height: 7.5rem;
+      resize: vertical;
+      font-size: clamp(1.35rem, 2.5vw, 1.7rem);
+    }
+
+    .stack { display: flex; flex-direction: column; gap: 0.75rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.9rem 1rem 1rem;
+    }
+    .lineno, .tag, .ask-label {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ask-label { margin: 0.85rem 0 0.4rem; }
+    .ask-label.fail { color: var(--teal-deep); }
+    .ask-label.pay { color: var(--rust); }
+    .linetext {
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      line-height: 1.35;
+      margin: 0.25rem 0 0.7rem;
+    }
+    .card.crossed .linetext {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .pair-read { margin: 0.75rem 0 0; font-size: 0.98rem; }
+    .pair-read.bad { color: var(--rust); }
+    .pair-read.good { color: var(--teal-deep); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chip, .text-btn {
+      border: 1px solid var(--line);
+      background: transparent;
+      border-radius: 999px;
+      padding: 0.42rem 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .chip[aria-pressed="true"] {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #f6f3ec;
+    }
+    .chip.fail[aria-pressed="true"] {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+    }
+    .chip.pay[aria-pressed="true"] {
+      background: var(--rust);
+      border-color: var(--rust);
+      color: white;
+    }
+    .chip.closed {
+      border-style: dashed;
+      color: var(--faint);
+      cursor: default;
+    }
+    .text-btn { border-radius: 8px; }
+    .text-btn:disabled { opacity: 0.4; }
+
+    .lines { list-style: none; padding: 0; margin: 0 0 1.2rem; display: flex; flex-direction: column; gap: 0.45rem; }
+    .lines li {
+      display: flex;
+      gap: 0.55rem;
+      align-items: baseline;
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      line-height: 1.35;
+      padding: 0.45rem 0.2rem 0.45rem 0.7rem;
+      border-left: 3px solid var(--line);
+    }
+    .lines li.crossed { color: var(--muted); }
+    .lines li.crossed span { text-decoration: line-through; }
+    .lines li[data-mark="reminder"] { border-left-color: var(--bar-rust); }
+    .lines li[data-mark="defines"] { border-left-color: var(--teal); }
+    .lines li[data-mark="other"] { border-left-color: var(--blue); }
+    .badge {
+      flex: none;
+      font-family: var(--sans);
+      font-style: normal;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-radius: 999px;
+      padding: 0.12rem 0.45rem;
+      background: var(--paper-2);
+    }
+    .badge.open0 { color: var(--teal-deep); }
+    .badge.open1 { color: var(--blue); }
+    .markword {
+      flex: none;
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .counts { margin: 0.4rem 0 1.2rem; }
+    .counts figcaption { color: var(--muted); margin: 0 0 0.7rem; }
+    .counts figcaption:last-child { margin: 0.85rem 0 0; }
+    .count { margin: 0 0 1rem; }
+    .count-top {
+      display: flex;
+      gap: 0.8rem;
+      align-items: baseline;
+      margin-bottom: 0.35rem;
+    }
+    .num {
+      font-family: var(--serif);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+      width: 2.3ch;
+      flex: none;
+    }
+    .what { font-size: 1.05rem; }
+    .track {
+      height: 14px;
+      background: #e4ddd2;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+      transform: scaleX(0);
+      transform-origin: left center;
+      animation: grow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes grow { to { transform: scaleX(1); } }
+    .counts.compact .count-top { display: block; }
+    .counts.compact .num { width: auto; font-size: 1.7rem; line-height: 1; }
+    .counts.compact .what { display: block; font-size: 0.92rem; margin-top: 0.2rem; }
+    .counts.compact figcaption { font-size: 0.92rem; }
+    .counts.compact .track { height: 10px; }
+
+    .revise-layout { display: grid; gap: 1.4rem; }
+    @media (min-width: 860px) {
+      .revise-layout { grid-template-columns: 270px 1fr; align-items: start; }
+      .revise-layout .counts { position: sticky; top: 5.4rem; }
+    }
+
+    .add { margin-top: 0.4rem; }
+    .add h2 { font-size: 1.25rem; }
+    .draft { font-size: 1.2rem; }
+
+    .choices {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.4rem;
+    }
+    @media (min-width: 720px) {
+      .choices { grid-template-columns: 1fr 1fr; }
+    }
+    .choice {
+      text-align: left;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem 1.05rem 1.05rem;
+    }
+    .choice strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .choice span { color: var(--muted); font-size: 1rem; }
+    .choice[aria-pressed="true"] {
+      border-color: var(--ink);
+      box-shadow: inset 0 0 0 1px var(--ink);
+    }
+
+    .split-cards {
+      display: grid;
+      gap: 0.8rem;
+      margin: 1.2rem 0 1rem;
+    }
+    @media (min-width: 800px) {
+      .split-cards { grid-template-columns: 1fr 1fr; }
+    }
+    .split-cards article {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem 1.1rem 1.15rem;
+    }
+    .split-cards .num { font-size: 2.4rem; }
+    .neither {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      line-height: 1.35;
+      margin: 0.2rem 0 0.4rem;
+      max-width: 28em;
+    }
+
+    .versus {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.85rem;
+      align-items: baseline;
+      margin: 0.4rem 0 0.8rem;
+    }
+    .versus .who {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .versus .fail { color: var(--teal-deep); }
+    .versus .pay { color: var(--rust); }
+    .versus .vs { color: var(--muted); font-size: 0.95rem; }
+    .quote {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1.35;
+      margin: 0 0 1rem;
+      padding-left: 0.8rem;
+      border-left: 3px solid var(--line);
+    }
+
+    .pair {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem 1.05rem;
+      margin-bottom: 0.7rem;
+    }
+    .pair[aria-pressed="true"] {
+      border-color: var(--ink);
+      box-shadow: inset 0 0 0 1px var(--ink);
+    }
+    .pair .names {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .pair .names b { font-weight: 600; }
+    .pair .names .fail { color: var(--teal-deep); }
+    .pair .names .pay { color: var(--rust); }
+    .pair .about {
+      display: block;
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-family: var(--serif);
+      font-size: 1.1rem;
+    }
+
+    .reply { padding: 1.2rem 1.3rem 1.3rem; margin-bottom: 1.3rem; }
+    .reply .from { padding-right: 0; }
+    .reply .ask {
+      white-space: pre-wrap;
+      margin-bottom: 0;
+    }
+    .trace { color: var(--muted); max-width: 38rem; }
+    .keep { list-style: none; padding: 0; margin: 0.4rem 0 0; display: flex; flex-direction: column; gap: 0.85rem; }
+    .keep li {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      line-height: 1.35;
+    }
+    .keep li span {
+      font-variant-numeric: tabular-nums;
+      color: var(--teal-deep);
+      font-weight: 600;
+    }
+
+    .dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 4;
+      background: rgba(243, 239, 230, 0.94);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line);
+      padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+    }
+    .dock-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    #back {
+      background: none;
+      border: 0;
+      color: var(--muted);
+      font-weight: 600;
+      min-height: 48px;
+      padding: 0 0.2rem;
+    }
+    #note {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    #note.is-gate { color: var(--rust); }
+    #next {
+      background: var(--ink);
+      color: #f6f3ec;
+      border: 0;
+      border-radius: 999px;
+      min-height: 48px;
+      padding: 0 1.15rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    #next:disabled { background: #cfc6ba; color: #6f675e; }
+    #next:hover:not(:disabled) { background: #000; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      background: rgba(28, 25, 21, 0.38);
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+    .modal div[role="dialog"] {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.3rem 1.3rem 1.15rem;
+      width: min(24rem, 100%);
+      box-shadow: 0 20px 50px rgba(28, 25, 21, 0.18);
+    }
+    .modal h2 { font-size: 1.6rem; }
+    .modal p { margin: 0.4rem 0 1rem; color: var(--muted); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+    .modal-actions button {
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 0 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: transparent;
+    }
+    .danger { background: var(--ink) !important; color: #f6f3ec; border-color: var(--ink) !important; }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .ico { display: block; }
+
+    .meter {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      margin: 0 0 1rem;
+    }
+    .meter i {
+      width: 2.4rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: #e4ddd2;
+      display: block;
+    }
+    .meter i.on { background: var(--teal); }
+    .meter b { margin-left: 0.35rem; font-size: 0.92rem; color: var(--muted); font-weight: 650; }
+
+    .spaces, .aha-picture { display: grid; gap: 0.7rem; margin: 0 0 1.15rem; }
+    .panel {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 0.9rem 1rem 1rem;
+      box-shadow: 0 10px 28px rgba(60, 42, 12, 0.04);
+    }
+    .panel.problem { border: 2px dashed var(--teal); }
+    .panel.solution { border: 2px solid var(--bar-rust); }
+    .panel.problem .eyebrow { color: var(--teal-deep); }
+    .panel.solution .eyebrow { color: var(--rust); }
+    .tally {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+      margin: 0.25rem 0 0.35rem;
+    }
+    .panel.problem .tally { color: var(--teal-deep); }
+    .panel.solution .tally { color: var(--rust); }
+    .glyphs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      list-style: none;
+      padding: 0;
+      margin: 0.35rem 0 0;
+    }
+    .glyphs li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      min-width: 4.6rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .glyphs .ico { width: 2.15rem; height: 2.15rem; color: var(--rust); }
+    .panel .mark-ico .ico { width: 2.4rem; height: 2.4rem; color: var(--teal); }
+    .spaces .problem { order: -1; }
+    .room {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--ink);
+      color: #f6f3ec;
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+    }
+    .room .ico { width: 3.6rem; height: 2rem; color: #f6f3ec; }
+    .room p { margin: 0; font-family: var(--serif); font-size: 1.25rem; }
+    .room .eyebrow { color: #b7ddd4; }
+    .into { display: flex; align-items: center; justify-content: center; color: var(--rust); }
+    .into .arrow-right { width: 2.4rem; height: 1.4rem; }
+    .into .arrow-down { width: 1.4rem; height: 2.4rem; display: none; }
+    @media (min-width: 800px) {
+      .spaces { grid-template-columns: 1fr 1.15fr; }
+      .aha-picture {
+        grid-template-columns: 1fr auto 1.15fr;
+        grid-template-areas:
+          "room arrow solution"
+          "problem problem solution";
+        align-items: stretch;
+      }
+      .aha-picture .room { grid-area: room; }
+      .aha-picture .into { grid-area: arrow; }
+      .aha-picture .solution { grid-area: solution; }
+      .aha-picture .problem { grid-area: problem; }
+    }
+    @media (max-width: 799px) {
+      .aha-picture .into .arrow-right { display: none; }
+      .aha-picture .into .arrow-down { display: block; }
+    }
+
+    .sources {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.55rem;
+      align-items: stretch;
+      margin: 0 0 0.85rem;
+    }
+    .source {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.75rem 0.9rem;
+    }
+    .source.now { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); }
+    .source .eyebrow { color: var(--muted); }
+    .source.now .eyebrow { color: var(--teal-deep); }
+    .source-name {
+      font-family: var(--serif);
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      margin: 0.15rem 0 0;
+      line-height: 1.15;
+    }
+    .source-join {
+      align-self: center;
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      color: var(--muted);
+    }
+    .stackbar {
+      display: flex;
+      height: 3.8rem;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e4ddd2;
+    }
+    .stackbar.slim { height: 2.5rem; }
+    .stackbar-grow {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      animation: grow 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .seg { display: grid; place-items: center; min-width: 0; color: white; }
+    .seg b {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(1.05rem, 2.4vw, 1.85rem);
+      letter-spacing: -0.03em;
+    }
+    .stackbar.slim .seg b { font-size: 1.15rem; }
+    .s-open-0 { background: var(--teal); }
+    .s-open-1 { background: var(--blue); }
+    .s-closed { background: var(--bar-rust); }
+    .causes {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+    }
+    @media (min-width: 800px) {
+      .causes { grid-template-columns: repeat(3, 1fr); }
+    }
+    .cause {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.9rem 1rem 1rem;
+    }
+    .cause-ico { width: 6.4rem; height: 4.25rem; }
+    .cause-ico .ico { width: 100%; height: 100%; }
+    .cause .num { width: auto; font-size: 2.5rem; margin: 0.25rem 0; }
+    .cause p { margin: 0; }
+    .cause.open0 .cause-ico, .cause.open0 .num { color: var(--teal-deep); }
+    .cause.open1 .cause-ico, .cause.open1 .num { color: var(--blue); }
+    .cause.shut .cause-ico, .cause.shut .num { color: var(--rust); }
+    .bar-legend { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+    .bar-legend li {
+      display: flex;
+      gap: 0.45rem;
+      align-items: flex-start;
+      margin: 0.4rem 0;
+      font-size: 0.92rem;
+    }
+    .bar-legend i {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 2px;
+      flex: none;
+      margin-top: 0.35rem;
+    }
+    .slim-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.8rem;
+      list-style: none;
+      padding: 0;
+      margin: 0.55rem 0 1rem;
+    }
+    .slim-legend li { display: flex; gap: 0.35rem; align-items: center; font-weight: 650; font-size: 0.95rem; }
+    .slim-legend i { width: 0.7rem; height: 0.7rem; border-radius: 2px; display: block; }
+
+    .choice { display: flex; gap: 0.85rem; align-items: center; }
+    .choice-art { flex: none; width: 4.8rem; }
+    .choice-art svg { width: 4.8rem; height: 3.1rem; display: block; }
+    .choice-copy { min-width: 0; }
+    .split-cards .cause-ico { margin-bottom: 0.2rem; }
+    .split-cards .open0 .cause-ico,
+    .split-cards .open0 .num { color: var(--teal-deep); }
+    .split-cards .open1 .cause-ico,
+    .split-cards .open1 .num { color: var(--blue); }
+    .neither { display: flex; gap: 0.8rem; align-items: flex-start; }
+    .miss { flex: none; width: 2.6rem; height: 2.6rem; color: var(--muted); }
+    .miss .ico { width: 100%; height: 100%; }
+
+    .people {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.1rem;
+    }
+    .people li {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.7rem 0.35rem 0.75rem;
+      text-align: center;
+    }
+    .people .ico { width: 2.3rem; height: 2.3rem; margin: 0 auto; color: var(--teal-deep); }
+    .people span { display: block; margin-top: 0.3rem; font-size: 0.88rem; font-weight: 700; line-height: 1.2; }
+    .people small {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+    .card[data-mark="reminder"] { box-shadow: inset 4px 0 0 var(--bar-rust); }
+    .card[data-mark="defines"] { box-shadow: inset 4px 0 0 var(--teal); }
+    .card[data-mark="other"] { box-shadow: inset 4px 0 0 var(--blue); }
+
+    .pair { display: grid; grid-template-columns: 0.55rem 1fr; padding: 0; overflow: hidden; }
+    .pair .rail { display: flex; flex-direction: column; }
+    .pair .rail i:first-child { flex: 1; background: var(--teal); }
+    .pair .rail i:last-child { flex: 1; background: var(--rust); }
+    .pair-body { padding: 1rem 1.05rem; display: block; }
+
+    .balance {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      align-items: start;
+      margin: 0.2rem 0 1rem;
+    }
+    .pan {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0.85rem 0.9rem 1rem;
+    }
+    .pan .sign {
+      font-family: var(--serif);
+      font-size: 2rem;
+      line-height: 1;
+      margin: 0;
+    }
+    .pan .who {
+      font-family: var(--serif);
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin: 0.2rem 0 0.15rem;
+    }
+    .pan .how { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .pan.up { border-top: 7px solid var(--teal); }
+    .pan.up .sign, .pan.up .who { color: var(--teal-deep); }
+    .pan.down { border-top: 7px solid var(--rust); margin-top: 2.4rem; }
+    .pan.down .sign, .pan.down .who { color: var(--rust); }
+    .fulcrum {
+      width: 1.6rem;
+      display: flex;
+      justify-content: center;
+      padding-bottom: 0.35rem;
+    }
+    .pivot {
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-bottom: 14px solid var(--ink);
+    }
+
+    .handoff {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 0 0 1rem;
+    }
+    .handoff .src {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.8rem 0.6rem;
+      text-align: center;
+    }
+    .handoff .src.next { border-style: dashed; border-color: var(--teal); }
+    .handoff .ico { width: 2rem; height: 2rem; margin: 0 auto 0.35rem; color: var(--teal-deep); }
+    .handoff p { margin: 0; font-weight: 700; font-size: 0.98rem; }
+
+    .keep li { align-items: center; }
+    .keep-ico { width: 2.5rem; height: 2.5rem; color: var(--teal-deep); }
+    .keep-ico .ico { width: 100%; height: 100%; }
+
+    @media (max-width: 640px) {
+      .people { grid-template-columns: 1fr 1fr; }
+      .sources { grid-template-columns: 1fr; }
+      .source-join { display: none; }
+      .pan .who { font-size: 1.35rem; }
+    }
+
+    @media (max-width: 700px) {
+      .dock-inner { flex-wrap: wrap; }
+      #note { order: -1; flex-basis: 100%; text-align: left; }
+      #next { margin-left: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fill, .stackbar-grow { animation: none; transform: none; }
+      .meter i { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <p id="live" class="sr-only" aria-live="polite"></p>
+  <header class="top">
+    <div class="top-inner">
+      <div>
+        <p class="kicker">Requirements elicitation</p>
+        <p class="name">One sentence, three causes</p>
+      </div>
+      <div class="status">
+        <p id="phase" class="phase"></p>
+        <ol class="cycles" aria-label="Tutorial progress">
+          <li id="cycle-scope">1 Scope</li>
+          <li id="cycle-causes">2 Causes</li>
+          <li id="cycle-conflict">3 Conflict</li>
+        </ol>
+        <button type="button" id="reset" data-action="reset">Start over</button>
+      </div>
+    </div>
+  </header>
+  <main id="stage"></main>
+  <div class="dock">
+    <div class="dock-inner">
+      <button type="button" id="back" data-action="back">Back</button>
+      <p id="note" aria-live="polite"></p>
+      <button type="button" id="next" data-action="next"></button>
+    </div>
+  </div>
+  <div id="modal" class="modal" hidden>
+    <div role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">Clear this attempt?</h2>
+      <p id="modal-body">The five lines and everything after them will be erased.</p>
+      <div class="modal-actions">
+        <button type="button" data-action="cancel-reset">Keep working</button>
+        <button type="button" class="danger" data-action="confirm-reset">Clear it</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    "use strict";
+
+    const KEY = "one-sentence-three-causes-v1";
+    const ORDER = ["brief", "write", "discuss1", "aha1", "facts", "revise", "discuss2", "aha2", "assign", "discuss3", "aha3", "question", "close"];
+    const WIDE = new Set(["facts", "revise", "discuss1", "discuss2", "aha1", "aha2", "aha3", "assign", "discuss3", "question", "close"]);
+    const SHORT = new Set(["brief"]);
+    const META = {
+      brief:    { cycle: "scope",    phase: "Brief",     kind: "brief",     next: "Write five lines" },
+      write:    { cycle: "scope",    phase: "Challenge", kind: "challenge", next: "Lock these five lines" },
+      discuss1: { cycle: "scope",    phase: "Discuss",   kind: "discuss",   next: "Discussion done" },
+      aha1:     { cycle: "scope",    phase: "Aha",       kind: "aha",       next: "Turn the sheet over" },
+      facts:    { cycle: "causes",   phase: "Reveal",    kind: "reveal",    next: "Revise the lines" },
+      revise:   { cycle: "causes",   phase: "Challenge", kind: "challenge", next: "Lock the revision" },
+      discuss2: { cycle: "causes",   phase: "Discuss",   kind: "discuss",   next: "Discussion done" },
+      aha2:     { cycle: "causes",   phase: "Aha",       kind: "aha",       next: "Name who is influenced" },
+      assign:   { cycle: "conflict", phase: "Challenge", kind: "challenge", next: "Lock the pairs" },
+      discuss3: { cycle: "conflict", phase: "Discuss",   kind: "discuss",   next: "We read this conflict" },
+      aha3:     { cycle: "conflict", phase: "Aha",       kind: "aha",       next: "Ask the next source" },
+      question: { cycle: "conflict", phase: "Challenge", kind: "challenge", next: "Send this question" },
+      close:    { cycle: "conflict", phase: "Keep",      kind: "keep",      next: "Start again" }
+    };
+    const TIME = {
+      write: "About 8 minutes, in silence.",
+      discuss1: "About 4 minutes. Stay with the question.",
+      revise: "About 6 minutes.",
+      discuss2: "About 4 minutes. Stay with the question.",
+      assign: "About 6 minutes.",
+      discuss3: "About 4 minutes. Read the two names, then the line.",
+      question: "About 5 minutes."
+    };
+    const CASES = {
+      exams: {
+        pick: "Missed exams",
+        blurb: "Students stop missing their exams.",
+        from: "Examinations office",
+        when: "Monday 08:14",
+        ask: "We need a system so that students stop missing their exams.",
+        ask2: "Can you scope it this week?",
+        totalLabel: "70 exams marked missed",
+        discuss1: "How many lines are already solutions: a reminder, a calendar, a notification? How many stay in the problem space and say what missing an exam means? Pick the closer description.",
+        hypothesis: "The email states a business goal. A reminder, a calendar, a notification: each one is a solution.",
+        smallName: "Forgot",
+        story: "Forty-one exams: the student and the exam supervisor did not share one time and one room. Two sources for one exam. Nineteen: a student had two exams in the same hour. A constraint the exam scheduler was allowed to break.",
+        neither: "A notification is a function in the solution space. It meets neither condition.",
+        aside: "The 10 are a real event. They are 10 of the 70. Elicit the 60 first.",
+        aha3: "The exam office can look successful while students still sit in the wrong room, when missed is counted at the door and the exam scheduler never sees the correction. That is a conflict of objectives.",
+        asker: "the exam office",
+        sponsorAsk: "The exam office",
+        replyTo: "Examinations office",
+        marks: {
+          reminder: { button: "Solution", word: "Solution", tag: "You marked this as a solution" },
+          defines: { button: "Problem space", word: "Problem space", tag: "You marked this as the problem space" },
+          other: { button: "Something else", word: "Something else", tag: "You marked this as something else" }
+        },
+        who: [
+          ["student", "Student", "Sits the exam"],
+          ["invigilator", "Exam supervisor", "Checks the list at the door"],
+          ["exams", "Exam office", "Counts who was missing"],
+          ["timetable", "Exam scheduler", "Sets the times and rooms"]
+        ],
+        piles: [
+          { n: 41, kind: "open", what: "were in a room the exam scheduler had changed that morning", title: "A checkable condition", body: "The student and the exam supervisor are shown the same time and the same room.", color: "#0f766e" },
+          { n: 19, kind: "open", what: "had two exams in the same hour", title: "A constraint", body: "A student is not given two exams in the same hour.", color: "#1e40af" },
+          { n: 10, kind: "closed", what: "said they forgot, or gave no answer", color: "#c2410c" }
+        ]
+      }
+    };
+
+    let modalMode = "reset";
+    let pendingCase = null;
+
+    function sheet() {
+      return CASES[state.caseId] || CASES.exams;
+    }
+
+    function openPiles() {
+      return sheet().piles.filter((pile) => pile.kind === "open");
+    }
+
+    function closedPile() {
+      return sheet().piles.find((pile) => pile.kind === "closed");
+    }
+
+    function totalCount() {
+      return sheet().piles.reduce((sum, pile) => sum + pile.n, 0);
+    }
+
+    function whoName(id) {
+      const row = sheet().who.find(([key]) => key === id);
+      return row ? row[1] : null;
+    }
+
+    function openFact(n) {
+      return openPiles().some((pile) => pile.n === n);
+    }
+
+    const stage = document.getElementById("stage");
+    const phaseEl = document.getElementById("phase");
+    const note = document.getElementById("note");
+    const dockNext = document.getElementById("next");
+    const dockBack = document.getElementById("back");
+    const live = document.getElementById("live");
+    const modal = document.getElementById("modal");
+
+    let state = load();
+
+    function fresh() {
+      return {
+        step: "brief",
+        caseId: "exams",
+        locked: false,
+        lines: ["", "", "", "", ""],
+        marks: [null, null, null, null, null],
+        crossed: [false, false, false, false, false],
+        added: [],
+        nextId: 1,
+        draft: "",
+        draftFact: null,
+        split: null,
+        assign: {},
+        spoken: null,
+        question: ""
+      };
+    }
+
+    function load() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(KEY) || "null");
+        const next = fresh();
+        if (!raw || typeof raw !== "object") return next;
+        if (ORDER.includes(raw.step)) next.step = raw.step;
+        if (CASES[raw.caseId]) next.caseId = raw.caseId;
+        next.locked = !!raw.locked;
+        if (Array.isArray(raw.lines) && raw.lines.length === 5) next.lines = raw.lines.map(String);
+        if (Array.isArray(raw.marks) && raw.marks.length === 5) {
+          next.marks = raw.marks.map((m) => (m === "reminder" || m === "defines" || m === "other" ? m : null));
+        }
+        if (Array.isArray(raw.crossed) && raw.crossed.length === 5) next.crossed = raw.crossed.map(Boolean);
+        const allowed = new Set((CASES[next.caseId] || CASES.exams).piles.filter((pile) => pile.kind === "open").map((pile) => pile.n));
+        if (Array.isArray(raw.added)) {
+          next.added = raw.added
+            .filter((a) => a && typeof a.text === "string" && allowed.has(a.fact))
+            .map((a) => ({ id: String(a.id), text: a.text, fact: a.fact }));
+        }
+        if (Number.isFinite(raw.nextId)) next.nextId = raw.nextId;
+        const used = next.added.map((a) => Number(String(a.id).replace(/\D/g, "")) || 0);
+        const maxUsed = used.length ? Math.max(...used) : 0;
+        if (next.nextId <= maxUsed) next.nextId = maxUsed + 1;
+        if (typeof raw.draft === "string") next.draft = raw.draft;
+        if (allowed.has(raw.draftFact)) next.draftFact = raw.draftFact;
+        if (raw.split === "one" || raw.split === "split") next.split = raw.split;
+        if (raw.assign && typeof raw.assign === "object") next.assign = raw.assign;
+        if (typeof raw.spoken === "string") next.spoken = raw.spoken;
+        if (typeof raw.question === "string") next.question = raw.question;
+        if (ORDER.indexOf(next.step) > ORDER.indexOf("write")) next.locked = true;
+        return next;
+      } catch (err) {
+        return fresh();
+      }
+    }
+
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (err) { /* private mode */ }
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    const ICONS = {
+      bell: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 8v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M14 32c0-8 3.2-13 10-13s10 5 10 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10 32h28" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M20 36a4 4 0 0 0 8 0" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>',
+      calendar: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="12" width="30" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M9 20h30M17 8v8M31 8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      notice: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="12" width="32" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16 32l4 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+      noticeStruck: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="14" width="28" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M14 32l4 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M8 42L40 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      rooms: '<svg class="ico" viewBox="0 0 72 48" aria-hidden="true"><rect x="1" y="4" width="30" height="40" rx="5" fill="currentColor"/><rect x="41" y="4" width="30" height="40" rx="5" fill="none" stroke="currentColor" stroke-width="2.6"/><text x="16" y="29" text-anchor="middle" fill="#fff" font-size="14" font-family="Georgia, serif" font-weight="700">9:00</text><text x="56" y="29" text-anchor="middle" fill="currentColor" font-size="13" font-family="Georgia, serif" font-weight="700">11:00</text></svg>',
+      overlap: '<svg class="ico" viewBox="0 0 72 48" aria-hidden="true"><rect x="2" y="10" width="46" height="28" rx="6" fill="currentColor" opacity="0.28"/><rect x="24" y="10" width="46" height="28" rx="6" fill="currentColor" opacity="0.28"/><rect x="24" y="10" width="24" height="28" fill="currentColor"/></svg>',
+      forgot: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3.5 3.5"/><path d="M19.5 19.5a4.5 4.5 0 1 1 6.4 4.1c-1.7 1-2.4 2.1-2.4 3.9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="24" cy="33" r="1.5" fill="currentColor"/></svg>',
+      lock: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="22" width="20" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M18 22v-5a6 6 0 0 1 12 0v5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      gap: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="8" width="34" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3.5"/><path d="M24 16v9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="24" cy="31" r="1.5" fill="currentColor"/></svg>',
+      check: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="8" width="26" height="32" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M18 24l4 4 9-10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      pull: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><path d="M16 38V14M16 14l-5 5M16 14l5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M32 10v24M32 34l-5-5M32 34l5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></svg>',
+      group: '<svg class="ico" viewBox="0 0 64 32" aria-hidden="true"><circle cx="12" cy="16" r="7" fill="currentColor"/><circle cx="32" cy="16" r="7" fill="currentColor" opacity="0.72"/><circle cx="52" cy="16" r="7" fill="currentColor" opacity="0.45"/></svg>',
+      arrow: '<svg class="ico arrow-right" viewBox="0 0 48 24" aria-hidden="true"><path d="M2 12h38M30 4l10 8-10 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      arrowDown: '<svg class="ico arrow-down" viewBox="0 0 24 48" aria-hidden="true"><path d="M12 2v38M4 30l8 10 8-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      person: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 38c2-8 7-11 12-11s10 3 12 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      clipboard: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="13" y="10" width="22" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M19 10h10v4H19zM18 24h12M18 30h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      building: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40V18l16-8 16 8v22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M20 40V28h8v12M16 22h4M28 22h4M16 28h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      grid: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="10" width="30" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M9 24h30M24 10v28" stroke="currentColor" stroke-width="2.2"/></svg>'
+    };
+
+    function tally() {
+      const counts = { reminder: 0, defines: 0, other: 0 };
+      state.marks.forEach((mark) => { if (mark) counts[mark] += 1; });
+      return counts;
+    }
+
+    function segClass(pile, index) {
+      return pile.kind === "closed" ? "s-closed" : "s-open-" + index;
+    }
+
+    function pileIcon(pile, index) {
+      if (pile.kind === "closed") return ICONS.forgot;
+      return index === 0 ? ICONS.rooms : ICONS.overlap;
+    }
+
+    function stackBar(slim) {
+      const label = sheet().piles.map((pile) => pile.n + " " + pile.what).join(". ");
+      const segs = sheet().piles.map((pile, index) =>
+        `<div class="seg ${segClass(pile, index)}" style="flex:${pile.n}"><b>${pile.n}</b></div>`
+      ).join("");
+      return `<div class="stackbar${slim ? " slim" : ""}" role="img" aria-label="${esc(label)}"><div class="stackbar-grow">${segs}</div></div>`;
+    }
+
+    function spacePanels(counts) {
+      return `<section class="panel solution">
+          <p class="eyebrow">Solution space</p>
+          <p class="tally">${counts.reminder}</p>
+          <ul class="glyphs">
+            <li>${ICONS.bell}<span>Reminder</span></li>
+            <li>${ICONS.calendar}<span>Calendar</span></li>
+            <li>${ICONS.notice}<span>Notification</span></li>
+          </ul>
+        </section>
+        <section class="panel problem">
+          <p class="eyebrow">Problem space</p>
+          <p class="tally">${counts.defines}</p>
+          <div class="mark-ico">${ICONS.gap}</div>
+        </section>`;
+    }
+
+    function peopleStrip() {
+      const icons = { student: ICONS.person, invigilator: ICONS.clipboard, exams: ICONS.building, timetable: ICONS.grid };
+      return `<ul class="people">${sheet().who.map(([id, label, job]) =>
+        `<li>${icons[id] || ICONS.person}<span>${esc(label)}</span><small>${esc(job || "")}</small></li>`
+      ).join("")}</ul>`;
+    }
+
+    function balance(pos, neg) {
+      return `<div class="balance">
+        <div class="pan up">
+          <p class="sign" aria-hidden="true">+</p>
+          <p class="who">${esc(pos)}</p>
+          <p class="how">positively</p>
+        </div>
+        <div class="pan down">
+          <p class="sign" aria-hidden="true">−</p>
+          <p class="who">${esc(neg)}</p>
+          <p class="how">negatively</p>
+        </div>
+      </div>`;
+    }
+
+    function handoff() {
+      return `<div class="handoff" aria-hidden="true">
+        <div class="src">${ICONS.building}<p>${esc(sheet().from)}</p></div>
+        <div class="into">${ICONS.arrow}</div>
+        <div class="src next">${ICONS.person}<p>Next source</p></div>
+      </div>`;
+    }
+
+    function choiceArt(mode) {
+      const total = totalCount();
+      const [first, second] = openPiles();
+      if (mode === "one") {
+        return `<svg viewBox="0 0 78 48" aria-hidden="true"><rect x="6" y="8" width="66" height="32" rx="16" fill="none" stroke="#1c1915" stroke-width="2"/><text x="39" y="29" text-anchor="middle" font-size="16" font-family="Georgia, serif" fill="#1c1915">${total}</text></svg>`;
+      }
+      return `<svg viewBox="0 0 78 48" aria-hidden="true"><rect x="2" y="10" width="40" height="28" rx="8" fill="#0f766e"/><rect x="46" y="14" width="28" height="22" rx="8" fill="#1e40af"/><text x="22" y="29" text-anchor="middle" font-size="14" font-family="Georgia, serif" fill="#fff">${first.n}</text><text x="60" y="29" text-anchor="middle" font-size="13" font-family="Georgia, serif" fill="#fff">${second.n}</text></svg>`;
+    }
+
+    function h1(text) { return `<h1>${text}</h1>`; }
+
+    function emailFull() {
+      const item = sheet();
+      return `<article class="email full">
+        <div class="dogear" aria-hidden="true"></div>
+        <p class="from"><strong>${esc(item.from)}</strong><span>${esc(item.when)}</span></p>
+        <p class="ask">${esc(item.ask)}</p>
+        <p class="ask-2">${esc(item.ask2)}</p>
+      </article>`;
+    }
+
+    function emailMini() {
+      return `<blockquote class="email mini"><p class="ask">${esc(sheet().ask)}</p></blockquote>`;
+    }
+
+    function countsMarkup(compact) {
+      const total = totalCount();
+      if (compact) {
+        const legend = sheet().piles.map((pile, index) =>
+          `<li><i class="${segClass(pile, index)}"></i><span><b>${pile.n}</b> ${esc(pile.what)}</span></li>`
+        ).join("");
+        return `<figure class="counts compact">
+          <figcaption>Share of ${total}</figcaption>
+          ${stackBar(true)}
+          <ul class="bar-legend">${legend}</ul>
+        </figure>`;
+      }
+      const cards = sheet().piles.map((pile, index) => {
+        const kind = pile.kind === "closed" ? "shut" : "open" + index;
+        return `<article class="cause ${kind}">
+          <div class="cause-ico">${pileIcon(pile, index)}</div>
+          <p class="num">${pile.n}</p>
+          <p>${esc(pile.what)}</p>
+        </article>`;
+      }).join("");
+      return `<figure class="counts">
+        <div class="sources">
+          <div class="source"><p class="eyebrow">Stakeholder</p><p class="source-name">${esc(sheet().from)}</p></div>
+          <div class="source-join" aria-hidden="true">+</div>
+          <div class="source now"><p class="eyebrow">Hard data</p><p class="source-name">${total}</p></div>
+        </div>
+        ${stackBar(false)}
+        <div class="causes">${cards}</div>
+        <figcaption>Teaching case. ${esc(sheet().totalLabel)}. Each part is a share of ${total}.</figcaption>
+      </figure>`;
+    }
+
+    function surviving() {
+      const kept = state.lines
+        .map((text, i) => ({ id: "o" + i, text: text.trim(), kind: "original", mark: state.marks[i] }))
+        .filter((_, i) => !state.crossed[i]);
+      const added = state.added.map((a) => ({ id: a.id, text: a.text.trim(), kind: "added", fact: a.fact }));
+      return kept.concat(added);
+    }
+
+    function assignment(id) {
+      const row = state.assign[id];
+      if (!row || typeof row !== "object") return { fails: null, pays: null };
+      return {
+        fails: whoName(row.fails) ? row.fails : null,
+        pays: whoName(row.pays) ? row.pays : null
+      };
+    }
+
+    function okPair(line) {
+      const a = assignment(line.id);
+      return !!(a.fails && a.pays && a.fails !== a.pays);
+    }
+
+    function conflicts() {
+      return surviving().filter(okPair).map((line) => {
+        const a = assignment(line.id);
+        return { ...line, fails: a.fails, pays: a.pays };
+      });
+    }
+
+    function spokenPair() {
+      return conflicts().find((c) => c.id === state.spoken) || null;
+    }
+
+    function chips(lineId, side) {
+      const current = assignment(lineId)[side];
+      return sheet().who.map(([id, label]) => {
+        const pressed = current === id;
+        return `<button type="button" class="chip ${side === "fails" ? "fail" : "pay"}" data-action="${side}" data-id="${esc(lineId)}" data-who="${id}" data-focus="${side}-${lineId}-${id}" aria-pressed="${pressed}">${label}</button>`;
+      }).join("");
+    }
+
+    function pairSentence(id) {
+      const a = assignment(id);
+      if (a.fails && a.pays && a.fails === a.pays) {
+        return `<p class="pair-read bad">Those are the same stakeholder. Name who is influenced negatively.</p>`;
+      }
+      if (a.fails && a.pays) {
+        return `<p class="pair-read good">${esc(whoName(a.fails))} is influenced positively. ${esc(whoName(a.pays))} is influenced negatively.</p>`;
+      }
+      return "";
+    }
+
+    const VIEWS = {
+      brief() {
+        return `${h1("One sentence is the whole brief.")}
+          ${emailFull()}
+          <p class="fold">The counts that test a scope are on the back of this sheet. They stay hidden until you lock your lines.</p>
+          <ul class="constraints">
+            <li>This email is the only source</li>
+            <li>Five lines</li>
+            <li>No technology names</li>
+          </ul>`;
+      },
+      write() {
+        if (state.locked) {
+          const items = state.lines.map((text) => `<li><span>${esc(text.trim())}</span></li>`).join("");
+          return `${h1("The five lines are locked.")}
+            ${emailMini()}
+            <ul class="lines">${items}</ul>
+            <p class="aside">They stay as they were when you committed them, including after you see the counts.</p>`;
+        }
+        const fields = state.lines.map((text, i) => `<label class="rule"><span>${i + 1}</span><textarea data-line="${i}" maxlength="180" rows="2" aria-label="Line ${i + 1}">${esc(text)}</textarea></label>`).join("");
+        return `${h1("Write what the system must do.")}
+          ${emailMini()}
+          <p class="lede">One sentence per line. Leave technologies unnamed.</p>
+          <div class="meter" id="write-meter" aria-live="polite"><i></i><i></i><i></i><i></i><i></i><b>0 of 5</b></div>
+          <div class="rules">${fields}</div>`;
+      },
+      discuss1() {
+        const cards = state.lines.map((text, i) => {
+          const mark = state.marks[i];
+          const marks = sheet().marks;
+          const btn = (value) => `<button type="button" class="chip" data-action="mark" data-index="${i}" data-mark="${value}" data-focus="mark-${i}-${value}" aria-pressed="${mark === value}">${esc(marks[value].button)}</button>`;
+          return `<article class="card" data-mark="${mark || ""}">
+            <p class="lineno">Line ${i + 1}</p>
+            <p class="linetext">${esc(text.trim())}</p>
+            <div class="chips" role="group" aria-label="Closer description of line ${i + 1}">
+              ${btn("reminder")}
+              ${btn("defines")}
+              ${btn("other")}
+            </div>
+          </article>`;
+        }).join("");
+        return `${h1("Compare the five lines.")}
+          <p class="lede">${esc(sheet().discuss1)}</p>
+          <div class="spaces">${spacePanels(tally())}</div>
+          <div class="stack">${cards}</div>`;
+      },
+      aha1() {
+        const counts = tally();
+        const biggest = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+        let personal = "The marks are mixed. In the room, listen for the solutions that repeat. A shared solution came in with the group.";
+        const label = sheet().marks.reminder.word.toLowerCase();
+        const plural = label.endsWith("s") ? label : `${label}s`;
+        if (biggest === "reminder" && counts.reminder > 0) {
+          personal = counts.reminder === 1
+            ? "One line is a solution. Where the room repeats that solution, it came in with the group. The business goal did not contain it."
+            : `${counts.reminder} lines are ${plural}. They were already in the room. The business goal did not contain them.`;
+        } else if (biggest === "defines" && counts.defines > 0) {
+          personal = "The largest mark stays in the problem space: what missing an exam means. The hard data on the back tests whether that account matches the events.";
+        }
+        const items = state.lines.map((text, i) => `<li data-mark="${state.marks[i] || "other"}"><span class="markword">${esc(sheet().marks[state.marks[i]] ? sheet().marks[state.marks[i]].word : "")}</span><span>${esc(text.trim())}</span></li>`).join("");
+        return `${h1("That was introspection.")}
+          <div class="aha-picture">
+            <div class="room">${ICONS.group}<div><p class="eyebrow">Introspection</p><p>This room</p></div></div>
+            <div class="into" aria-hidden="true">${ICONS.arrow}${ICONS.arrowDown}</div>
+            ${spacePanels(counts)}
+          </div>
+          <p class="statement">Introspection is an elicitation technique. It collects what this room already believes. ${esc(sheet().hypothesis)} Elicitation identifies the problem space.</p>
+          <p class="lede">${personal}</p>
+          <ul class="lines">${items}</ul>
+          <p class="principle">Introspection does not identify the problem space.</p>`;
+      },
+      facts() {
+        return `${h1("Hard data, another source.")}
+          <p class="lede">The email was one stakeholder. These counts are hard data, a second source of requirements. They are the only facts you may use.</p>
+          ${countsMarkup(false)}`;
+      },
+      revise() {
+        const originals = state.lines.map((text, i) => `<article class="card${state.crossed[i] ? " crossed" : ""}">
+          <p class="tag">${esc(sheet().marks[state.marks[i]] ? sheet().marks[state.marks[i]].tag : "")}</p>
+          <p class="linetext">${esc(text.trim())}</p>
+          <button type="button" class="text-btn" data-action="cross" data-index="${i}" data-focus="cross-${i}" aria-pressed="${state.crossed[i]}">${state.crossed[i] ? "Restore" : "Cross out"}</button>
+        </article>`).join("");
+        const added = state.added.map((a) => `<article class="card">
+          <p class="tag">New line · changes the ${a.fact}</p>
+          <p class="linetext">${esc(a.text.trim())}</p>
+          <button type="button" class="text-btn" data-action="remove" data-id="${esc(a.id)}" data-focus="remove-${esc(a.id)}">Remove</button>
+        </article>`).join("");
+        const room = 2 - state.added.length;
+        const [first, second] = openPiles();
+        const shut = closedPile();
+        let form = `<p class="aside">Two new lines is the limit.</p>`;
+        if (room > 0) {
+          form = `<div class="add">
+            <h2>Add ${room === 2 ? "at most two lines" : "one more line"}</h2>
+            <p class="aside">A new line has to change the ${first.n} or the ${second.n}.</p>
+            <p class="lineno">New line</p>
+            <input class="draft" id="draft" maxlength="180" value="${esc(state.draft)}" aria-label="New line" autocomplete="off">
+            <div class="chips" style="margin-top:0.7rem">
+              <button type="button" class="chip" data-action="draft-fact" data-fact="${first.n}" data-focus="fact-${first.n}" aria-pressed="${state.draftFact === first.n}">Changes the ${first.n}</button>
+              <button type="button" class="chip" data-action="draft-fact" data-fact="${second.n}" data-focus="fact-${second.n}" aria-pressed="${state.draftFact === second.n}">Changes the ${second.n}</button>
+              <span class="chip closed">The ${shut.n} have no slot</span>
+            </div>
+            <button type="button" class="text-btn" id="add-line" data-action="add" style="margin-top:0.75rem">Add this line</button>
+          </div>`;
+        }
+        return `${h1("Keep only what the hard data supports.")}
+          <p class="lede">Cross out every line these events do not support. A line that survives is a condition you could check.</p>
+          <div class="revise-layout">
+            <aside>${countsMarkup(true)}</aside>
+            <div class="stack">${originals}${added}${form}</div>
+          </div>`;
+      },
+      discuss2() {
+        const orig = state.lines.map((text, i) => `<li class="${state.crossed[i] ? "crossed" : ""}"><span>${esc(text.trim())}</span></li>`);
+        const added = state.added.map((a) => {
+          const slot = openPiles().findIndex((pile) => pile.n === a.fact);
+          return `<li><em class="badge open${slot}">${a.fact}</em><span>${esc(a.text.trim())}</span></li>`;
+        });
+        const [first, second] = openPiles();
+        const total = totalCount();
+        const choice = (value, title, detail) => `<button type="button" class="choice" data-action="split" data-split="${value}" data-focus="split-${value}" aria-pressed="${state.split === value}"><span class="choice-art">${choiceArt(value)}</span><span class="choice-copy"><strong>${title}</strong><span>${detail}</span></span></button>`;
+        return `${h1("Is the goal one requirement?")}
+          <p class="lede">A requirement is a condition or capability you can check. Can one business goal still cover the ${total}?</p>
+          <ul class="lines">${orig.join("")}${added.join("")}</ul>
+          <div class="choices">
+            ${choice("one", "Still one requirement", `One requirement still covers all ${total}.`)}
+            ${choice("split", "Several requirements", `The ${first.n} and the ${second.n} are different conditions.`)}
+          </div>`;
+      },
+      aha2() {
+        const [first, second] = openPiles();
+        const lead = state.split === "one"
+          ? `The business goal can stay in the email. It is not yet one requirement. The ${first.n} and the ${second.n} are different conditions in the problem space.`
+          : `The goal has split into requirements. The ${first.n} and the ${second.n} are different conditions in the problem space.`;
+        const cards = openPiles().map((pile, index) => `<article class="open${index}">
+              <div class="cause-ico">${pileIcon(pile, index)}</div>
+              <p class="num">${pile.n}</p>
+              <h2>${esc(pile.title)}</h2>
+              <p>${esc(pile.body)}</p>
+            </article>`).join("");
+        const legend = sheet().piles.map((pile, index) =>
+          `<li><i class="${segClass(pile, index)}"></i>${pile.n}${pile.kind === "closed" ? " " + esc(sheet().smallName) : ""}</li>`
+        ).join("");
+        return `${h1(`${esc(sheet().smallName)} is the smallest pile.`)}
+          ${stackBar(true)}
+          <ul class="slim-legend" aria-hidden="true">${legend}</ul>
+          <p class="statement">${lead} ${esc(sheet().story)}</p>
+          <div class="split-cards">${cards}</div>
+          <p class="neither"><span class="miss">${ICONS.noticeStruck}</span><span>${esc(sheet().neither)}</span></p>
+          <p class="aside">${esc(sheet().aside)}</p>
+          <p class="principle">A requirement is a condition or capability the hard data can confirm.</p>`;
+      },
+      assign() {
+        const cards = surviving().map((line) => `<article class="card">
+          ${line.fact ? `<p class="tag">Changes the ${line.fact}</p>` : ""}
+          <p class="linetext">${esc(line.text)}</p>
+          <p class="ask-label fail">Influenced positively if we keep this</p>
+          <div class="chips" role="group" aria-label="Who is influenced positively if we keep this">${chips(line.id, "fails")}</div>
+          <p class="ask-label pay">Influenced negatively if we keep this</p>
+          <div class="chips" role="group" aria-label="Who is influenced negatively if we keep this">${chips(line.id, "pays")}</div>
+          ${pairSentence(line.id)}
+        </article>`).join("");
+        return `${h1("Who is influenced?")}
+          <p class="lede">A stakeholder has an interest in the product: they use it, manage it, or are affected by it. For each line, name who is influenced positively and who is influenced negatively if we keep it.</p>
+          ${peopleStrip()}
+          <div class="stack">${cards}</div>`;
+      },
+      discuss3() {
+        const pairs = conflicts().map((pair) => `<button type="button" class="pair" data-action="speak" data-id="${esc(pair.id)}" data-focus="speak-${esc(pair.id)}" aria-pressed="${state.spoken === pair.id}">
+          <span class="rail" aria-hidden="true"><i></i><i></i></span>
+          <span class="pair-body">
+            <span class="names"><b class="fail">${esc(whoName(pair.fails))}</b> positively, <b class="pay">${esc(whoName(pair.pays))}</b> negatively</span>
+            <span class="about">${esc(pair.text)}</span>
+          </span>
+        </button>`).join("");
+        return `${h1("Read one conflict.")}
+          <p class="lede">Read who is influenced positively, who is influenced negatively, then the line. Stop before you propose a solution.</p>
+          ${pairs}`;
+      },
+      aha3() {
+        const pair = spokenPair();
+        const body = pair
+          ? `${balance(whoName(pair.fails), whoName(pair.pays))}
+            <p class="quote">${esc(pair.text)}</p>`
+          : "";
+        return `${h1("Conflict of objectives.")}
+          ${body}
+          <p class="statement">${esc(sheet().aha3)}</p>
+          <p class="principle">A decision influences some stakeholders positively and others negatively. Negotiation starts from that conflict.</p>`;
+      },
+      question() {
+        return `${h1("Ask the next source.")}
+          <p class="lede">The exam office is one stakeholder. Write the question you take to the next source: another stakeholder, or the owner of the hard data.</p>
+          ${handoff()}
+          ${emailMini()}
+          <textarea id="question" maxlength="320" aria-label="Question you send back">${esc(state.question)}</textarea>`;
+      },
+      close() {
+        const pair = spokenPair();
+        const splitText = state.split === "one"
+          ? "The room kept one requirement."
+          : "The room split the goal into requirements.";
+        const pairText = pair
+          ? ` You read ${whoName(pair.fails)} positively against ${whoName(pair.pays)} negatively.`
+          : "";
+        return `${h1("Elicitation continues with a question.")}
+          <article class="email reply">
+            <p class="from"><strong>Reply</strong><span>To: ${esc(sheet().replyTo)}</span></p>
+            <p class="ask">${esc(state.question.trim())}</p>
+          </article>
+          <p class="trace">${splitText}${pairText}</p>
+          <p class="lede">Keep these.</p>
+          <ol class="keep">
+            <li><span>1</span><i class="keep-ico">${ICONS.gap}</i>Introspection does not identify the problem space.</li>
+            <li><span>2</span><i class="keep-ico">${ICONS.check}</i>A requirement is a condition the hard data can check.</li>
+            <li><span>3</span><i class="keep-ico">${ICONS.pull}</i>A decision influences stakeholders positively and negatively.</li>
+          </ol>`;
+      }
+    };
+
+    function gateMessage() {
+      switch (state.step) {
+        case "write":
+          if (state.locked) return "";
+          return state.lines.every((l) => l.trim().length >= 8) ? "" : "Five lines. Each one says what the system must do.";
+        case "discuss1":
+          return state.marks.every(Boolean) ? "" : "Mark every line before you continue.";
+        case "revise":
+          if (state.draft.trim() || state.draftFact) return "Add the line you started, or clear it.";
+          return surviving().length ? "" : `Keep or add a line the ${openPiles()[0].n} or the ${openPiles()[1].n} would support.`;
+        case "discuss2":
+          return state.split ? "" : "Choose one answer to discuss.";
+        case "assign":
+          return surviving().every(okPair) ? "" : "Each line needs two different stakeholders.";
+        case "discuss3":
+          return spokenPair() ? "" : "Choose the pair the room will read.";
+        case "question":
+          return state.question.trim().length >= 20 ? "" : "Write a question the next source could answer.";
+        default:
+          return "";
+      }
+    }
+
+    function syncDock() {
+      const gate = gateMessage();
+      const closing = state.step === "close";
+      dockNext.disabled = !closing && !!gate;
+      note.textContent = gate || TIME[state.step] || "";
+      note.classList.toggle("is-gate", !!gate);
+    }
+
+    function syncWriteMeter() {
+      const meter = document.getElementById("write-meter");
+      if (!meter) return;
+      const ready = state.lines.filter((line) => line.trim().length >= 8).length;
+      meter.querySelectorAll("i").forEach((mark, index) => mark.classList.toggle("on", index < ready));
+      meter.querySelector("b").textContent = ready + " of 5";
+    }
+
+    function syncDraftUi() {
+      const btn = document.getElementById("add-line");
+      if (!btn) return;
+      btn.disabled = !(state.draft.trim().length >= 8 && openFact(state.draftFact));
+    }
+
+    function cycleState(name) {
+      const order = ["scope", "causes", "conflict"];
+      if (state.step === "close") return "done";
+      const current = order.indexOf(META[state.step].cycle);
+      const index = order.indexOf(name);
+      if (index < current) return "done";
+      if (index === current) return "now";
+      return "ahead";
+    }
+
+    function render(opts = {}) {
+      const focusKey = !opts.stepChange && document.activeElement && document.activeElement.dataset
+        ? document.activeElement.dataset.focus
+        : "";
+      const y = opts.stepChange ? 0 : window.scrollY;
+      if (state.step === "discuss3") {
+        const ids = conflicts().map((c) => c.id);
+        if (!ids.includes(state.spoken)) state.spoken = ids.length === 1 ? ids[0] : null;
+      }
+      document.body.dataset.step = state.step;
+      document.body.dataset.wide = WIDE.has(state.step) ? "yes" : "no";
+      document.body.dataset.short = SHORT.has(state.step) ? "yes" : "no";
+      phaseEl.dataset.kind = META[state.step].kind;
+      phaseEl.textContent = META[state.step].phase;
+      document.title = `${META[state.step].phase} · One sentence, three causes`;
+      ["scope", "causes", "conflict"].forEach((name) => {
+        const el = document.getElementById("cycle-" + name);
+        const status = cycleState(name);
+        el.className = status === "ahead" ? "" : status;
+        el.setAttribute("aria-current", status === "now" ? "step" : "false");
+      });
+      stage.innerHTML = VIEWS[state.step]();
+      dockNext.textContent = state.step === "write" && state.locked ? "Continue" : META[state.step].next;
+      dockBack.hidden = state.step === "brief";
+      syncDock();
+      syncDraftUi();
+      syncWriteMeter();
+      save();
+      const heading = stage.querySelector("h1");
+      live.textContent = heading ? `${META[state.step].phase}. ${heading.textContent}` : META[state.step].phase;
+      if (opts.stepChange) window.scrollTo(0, 0);
+      else {
+        window.scrollTo(0, y);
+        if (focusKey) {
+          const node = stage.querySelector(`[data-focus="${CSS.escape(focusKey)}"]`);
+          if (node) node.focus();
+        }
+      }
+    }
+
+    function go(step) {
+      state.step = step;
+      render({ stepChange: true });
+    }
+
+    function onNext() {
+      if (!modal.hidden) return;
+      if (state.step === "close") {
+        const caseId = state.caseId;
+        state = fresh();
+        state.caseId = caseId;
+        save();
+        render({ stepChange: true });
+        return;
+      }
+      if (gateMessage()) return;
+      if (state.step === "write") state.locked = true;
+      if (state.step === "revise") {
+        state.draft = "";
+        state.draftFact = null;
+      }
+      go(ORDER[ORDER.indexOf(state.step) + 1]);
+    }
+
+    function onBack() {
+      const index = ORDER.indexOf(state.step);
+      if (index > 0) go(ORDER[index - 1]);
+    }
+
+    function showModal(mode) {
+      modalMode = mode || "reset";
+      document.getElementById("modal-title").textContent = modalMode === "switch" ? "Switch example?" : "Clear this attempt?";
+      document.getElementById("modal-body").textContent = modalMode === "switch"
+        ? "The lines in this attempt will be erased. The new example starts from its email."
+        : "The five lines and everything after them will be erased.";
+      modal.querySelector("[data-action='confirm-reset']").textContent = modalMode === "switch" ? "Switch" : "Clear it";
+      modal.hidden = false;
+      modal.querySelector("[data-action='cancel-reset']").focus();
+    }
+
+    function hideModal() {
+      modal.hidden = true;
+      modalMode = "reset";
+      pendingCase = null;
+    }
+
+    function tryAdd() {
+      const text = state.draft.trim();
+      if (text.length < 8 || !openFact(state.draftFact)) return;
+      if (state.added.length >= 2) return;
+      state.added.push({ id: "a" + state.nextId, text, fact: state.draftFact });
+      state.nextId += 1;
+      state.draft = "";
+      state.draftFact = null;
+      render();
+    }
+
+    function setSide(id, side, who) {
+      const row = assignment(id);
+      row[side] = row[side] === who ? null : who;
+      state.assign[id] = row;
+      render();
+    }
+
+    document.addEventListener("click", (event) => {
+      if (event.target.id === "modal") {
+        hideModal();
+        return;
+      }
+      const el = event.target.closest("[data-action]");
+      if (!el) return;
+      const action = el.dataset.action;
+      if (!modal.hidden && action !== "confirm-reset" && action !== "cancel-reset") return;
+      if (action === "next") onNext();
+      else if (action === "back") onBack();
+      else if (action === "reset") showModal("reset");
+      else if (action === "confirm-reset") {
+        const nextCase = modalMode === "switch" && CASES[pendingCase] ? pendingCase : state.caseId;
+        state = fresh();
+        state.caseId = nextCase;
+        hideModal();
+        render({ stepChange: true });
+      }       else if (action === "cancel-reset") hideModal();
+      else if (action === "mark") {
+        state.marks[Number(el.dataset.index)] = el.dataset.mark;
+        render();
+      } else if (action === "cross") {
+        const index = Number(el.dataset.index);
+        state.crossed[index] = !state.crossed[index];
+        render();
+      } else if (action === "remove") {
+        state.added = state.added.filter((a) => a.id !== el.dataset.id);
+        delete state.assign[el.dataset.id];
+        if (state.spoken === el.dataset.id) state.spoken = null;
+        render();
+      } else if (action === "draft-fact") {
+        const fact = Number(el.dataset.fact);
+        state.draftFact = state.draftFact === fact ? null : fact;
+        render();
+      } else if (action === "add") tryAdd();
+      else if (action === "split") {
+        state.split = el.dataset.split;
+        render();
+      } else if (action === "fails" || action === "pays") {
+        setSide(el.dataset.id, action, el.dataset.who);
+      } else if (action === "speak") {
+        state.spoken = el.dataset.id;
+        render();
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      const target = event.target;
+      if (target.dataset.line != null) {
+        state.lines[Number(target.dataset.line)] = target.value;
+        save();
+        syncDock();
+        syncWriteMeter();
+      } else if (target.id === "draft") {
+        state.draft = target.value;
+        save();
+        syncDock();
+        syncDraftUi();
+      } else if (target.id === "question") {
+        state.question = target.value;
+        save();
+        syncDock();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.hidden) {
+        hideModal();
+        return;
+      }
+      if (event.key === "Enter" && event.target.dataset && event.target.dataset.line != null) {
+        event.preventDefault();
+        const next = stage.querySelector(`[data-line="${Number(event.target.dataset.line) + 1}"]`);
+        if (next) next.focus();
+        else dockNext.focus();
+      }
+      if (event.key === "Enter" && event.target.id === "draft") {
+        event.preventDefault();
+        tryAdd();
+      }
+    });
+
+    render({ stepChange: true });
+  </script>
+</body>
+</html>

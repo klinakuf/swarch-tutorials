@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Elicitation recap · Two checks</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --faint: #8a8175;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+      padding-bottom: 6.5rem;
+    }
+    ::selection { background: #d5ebe4; }
+    :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: 0.45; }
+    a { color: var(--teal-deep); }
+
+    .top {
+      position: sticky; top: 0; z-index: 3;
+      background: rgba(243, 239, 230, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top-inner, .dock-inner {
+      width: min(920px, calc(100% - 2.5rem));
+      margin: 0 auto;
+    }
+    .top-inner {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 0.5rem 1rem;
+      min-height: 4.2rem; padding: 0.65rem 0;
+    }
+    .kicker {
+      margin: 0; font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 700; color: var(--muted);
+    }
+    .name {
+      margin: 0; font-family: var(--serif); font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .rail {
+      display: flex; gap: 0.3rem; list-style: none; padding: 0; margin: 0;
+    }
+    .rail li {
+      font-size: 0.82rem; font-weight: 600; color: var(--faint);
+      padding: 0.28rem 0.55rem; border-radius: 999px;
+    }
+    .rail li.now {
+      color: var(--ink); background: var(--card);
+      box-shadow: inset 0 0 0 1.5px var(--ink);
+    }
+    .rail li.done { color: var(--teal-deep); background: #e5f3ef; }
+
+    main {
+      width: min(760px, calc(100% - 2.5rem));
+      margin: 0 auto; padding: 1.6rem 0 1rem;
+    }
+    h1 {
+      font-family: var(--serif); font-weight: 600;
+      font-size: clamp(1.85rem, 4vw, 2.65rem);
+      letter-spacing: -0.03em; line-height: 1.1;
+      margin: 0 0 0.65rem; max-width: 16em;
+    }
+    .lede {
+      font-size: 1.12rem; line-height: 1.45;
+      margin: 0 0 1.1rem; max-width: 40rem;
+    }
+    .aside { color: var(--muted); font-size: 0.98rem; margin: 0.75rem 0 0; }
+
+    .cards {
+      display: grid; gap: 0.65rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin: 0 0 1.2rem;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 0.85rem 0.95rem;
+    }
+    .card strong {
+      display: block; font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--teal-deep); margin-bottom: 0.3rem;
+    }
+
+    .stem {
+      font-family: var(--serif); font-size: 1.28rem; line-height: 1.35;
+      margin: 0 0 1rem; max-width: 36rem;
+    }
+    .options { display: grid; gap: 0.55rem; }
+    .opt {
+      text-align: left; background: var(--card);
+      border: 1.5px solid var(--line); border-radius: 14px;
+      padding: 0.8rem 1rem; transition: border-color 0.15s, background 0.15s;
+    }
+    .opt:hover:not(:disabled) { border-color: var(--teal); }
+    .opt.selected { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+    .opt.correct {
+      border-color: var(--teal-deep); background: #e5f3ef;
+      box-shadow: inset 0 0 0 1px var(--teal-deep);
+    }
+    .opt.wrong {
+      border-color: var(--rust); background: #fce8e0;
+    }
+    .opt .letter {
+      font-weight: 800; color: var(--muted); margin-right: 0.45rem;
+    }
+    .feedback {
+      margin-top: 1rem; padding: 0.9rem 1rem;
+      border-radius: 14px; background: #e5f3ef; border: 1px solid #b7d9d1;
+    }
+    .feedback.miss {
+      background: #fce8e0; border-color: #e8b4a0;
+    }
+    .feedback h2 {
+      margin: 0 0 0.35rem; font-family: var(--serif);
+      font-size: 1.25rem; color: var(--teal-deep);
+    }
+    .feedback.miss h2 { color: var(--rust); }
+    .feedback p { margin: 0; }
+
+    .next-links {
+      display: grid; gap: 0.65rem; margin-top: 1rem;
+    }
+    .next-links a {
+      display: block; text-decoration: none; color: inherit;
+      background: var(--card); border: 1.5px solid var(--line);
+      border-radius: 14px; padding: 0.9rem 1rem;
+    }
+    .next-links a strong { display: block; color: var(--teal-deep); }
+    .next-links a:hover { border-color: var(--teal); }
+
+    .dock {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 4;
+      background: rgba(243, 239, 230, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line);
+      padding: 0.85rem 0 calc(0.85rem + env(safe-area-inset-bottom));
+    }
+    .dock-inner {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 0.65rem 1rem;
+    }
+    .hint-dock { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .nav { display: flex; gap: 0.5rem; }
+    .btn {
+      border-radius: 999px; padding: 0.55rem 1.15rem; font-weight: 700;
+      border: 1.5px solid var(--ink); background: var(--card);
+    }
+    .btn.primary { background: var(--ink); color: #fff; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div>
+        <p class="kicker">Software Architecture · University of Stuttgart</p>
+        <p class="name">Recap · Two checks</p>
+      </div>
+      <ol class="rail" id="rail" aria-label="Progress"></ol>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <footer class="dock">
+    <div class="dock-inner">
+      <p class="hint-dock" id="hint">Room together · vote before reveal</p>
+      <div class="nav">
+        <button type="button" class="btn" id="back">Back</button>
+        <button type="button" class="btn primary" id="next">Next</button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const STEPS = ["recap", "q1", "q2", "bridge"];
+
+    const Q1 = {
+      stem: "After the missed-exams email, several groups wrote “send a reminder 24 hours before.” Which statement about introspection is most accurate?",
+      options: [
+        {
+          id: "A",
+          text: "Valid elicitation: agreement in the room proves the reminder is a stakeholder requirement.",
+        },
+        {
+          id: "B",
+          text: "Introspection failed here; the technique only works when an external expert leads the room.",
+        },
+        {
+          id: "C",
+          text: "The line is a solution the room invented. Introspection collected what people already believed; it did not validate a need in the problem space.",
+        },
+        {
+          id: "D",
+          text: "Reminders are hard data, so this finding belongs to ground-truth analysis, not introspection.",
+        },
+      ],
+      answer: "C",
+      why: "Introspection surfaces the room’s existing beliefs. A reminder is a solution. Elicitation’s job first is the problem space (what “missed” means, whose objective is hurt), not the first fix that sounds helpful.",
+    };
+
+    const Q2 = {
+      stem: "Hard data: 41 overlapping-exam misses, 19 late registrations, 10 room changes the same morning. A group concludes “build automatic conflict detection into the scheduler.” What is the sharpest critique?",
+      options: [
+        {
+          id: "A",
+          text: "Hard data can never motivate a requirement; only interviews count.",
+        },
+        {
+          id: "B",
+          text: "Forty-one is too small an absolute number to justify any system change.",
+        },
+        {
+          id: "C",
+          text: "The counts locate a condition in the problem space. Jumping to a scheduler feature skips whose objective is served, what must be true, and whether another stakeholder would be hurt.",
+        },
+        {
+          id: "D",
+          text: "Ground-truth analysis forbids naming any system behavior; you may only publish the raw table.",
+        },
+      ],
+      answer: "C",
+      why: "Analyzing hard data is a second source of requirements. The numbers support claims about the problem (overlaps happen; room changes happen). They do not by themselves license a particular solution, and they do not replace stakeholder conflict analysis.",
+    };
+
+    const state = {
+      step: 0,
+      q1: null,
+      q1Revealed: false,
+      q2: null,
+      q2Revealed: false,
+    };
+
+    const main = document.getElementById("main");
+    const rail = document.getElementById("rail");
+    const hint = document.getElementById("hint");
+    const back = document.getElementById("back");
+    const next = document.getElementById("next");
+
+    function renderRail() {
+      const labels = ["Recap", "Q1", "Q2", "Next"];
+      rail.innerHTML = labels.map((lab, i) => {
+        const cls = i === state.step ? "now" : i < state.step ? "done" : "";
+        return `<li class="${cls}">${lab}</li>`;
+      }).join("");
+    }
+
+    function renderQuiz(q, pickKey, revealedKey) {
+      const pick = state[pickKey];
+      const revealed = state[revealedKey];
+      const opts = q.options.map((o) => {
+        let cls = "opt";
+        if (pick === o.id) cls += " selected";
+        if (revealed) {
+          if (o.id === q.answer) cls += " correct";
+          else if (pick === o.id) cls += " wrong";
+        }
+        return `<button type="button" class="${cls}" data-opt="${o.id}" ${revealed ? "disabled" : ""}>
+          <span class="letter">${o.id}.</span>${o.text}
+        </button>`;
+      }).join("");
+
+      let feedback = "";
+      if (revealed) {
+        const hit = pick === q.answer;
+        feedback = `<div class="feedback ${hit ? "" : "miss"}">
+          <h2>${hit ? "That holds." : "Not that one."}</h2>
+          <p><strong>Answer ${q.answer}.</strong> ${q.why}</p>
+        </div>`;
+      }
+
+      return `
+        <p class="stem">${q.stem}</p>
+        <div class="options" role="group">${opts}</div>
+        ${feedback}`;
+    }
+
+    function render() {
+      renderRail();
+      back.disabled = state.step === 0;
+      const id = STEPS[state.step];
+
+      if (id === "recap") {
+        hint.textContent = "Warm-up · ~3–4 min · last week’s terms";
+        next.textContent = "Next";
+        next.disabled = false;
+        main.innerHTML = `
+          <h1>Same problem. Sharper tools.</h1>
+          <p class="lede">
+            Last week you elicited from one stakeholder email, then from hard counts,
+            then named who a decision helps and who it hurts. Today: check two distinctions,
+            then compare elicitation techniques across groups on one board.
+          </p>
+          <div class="cards">
+            <div class="card"><strong>Introspection</strong>Collects what this room already believes. Fast. Biased toward our solutions.</div>
+            <div class="card"><strong>Hard data / ground truth</strong>A source beside the person who wrote. Locates conditions; does not pick the feature.</div>
+            <div class="card"><strong>Conflict of objectives</strong>A decision influences stakeholders positively and negatively. Negotiation starts there.</div>
+            <div class="card"><strong>Problem space</strong>What must be true about the world. Not the first reminder, calendar, or button.</div>
+          </div>
+          <p class="aside">Two questions next. Vote as a room (or pairs). Reveal only after a choice.</p>`;
+      }
+
+      if (id === "q1") {
+        hint.textContent = "Introspection · vote, then Reveal / Next";
+        next.textContent = state.q1Revealed ? "Next" : "Reveal";
+        next.disabled = !state.q1;
+        main.innerHTML = `
+          <h1>Check 1 · Introspection</h1>
+          ${renderQuiz(Q1, "q1", "q1Revealed")}`;
+        bindOpts("q1", "q1Revealed");
+      }
+
+      if (id === "q2") {
+        hint.textContent = "Ground truth · vote, then Reveal / Next";
+        next.textContent = state.q2Revealed ? "Next" : "Reveal";
+        next.disabled = !state.q2;
+        main.innerHTML = `
+          <h1>Check 2 · Ground-truth analysis</h1>
+          ${renderQuiz(Q2, "q2", "q2Revealed")}`;
+        bindOpts("q2", "q2Revealed");
+      }
+
+      if (id === "bridge") {
+        hint.textContent = "Open the board · assign techniques to groups";
+        next.textContent = "Open board";
+        next.disabled = false;
+        main.innerHTML = `
+          <h1>Distribute the techniques.</h1>
+          <p class="lede">
+            Each group gets one elicitation technique from the lecture table.
+            Fill pros, cons, and a context where that technique is the right first move.
+            We collect everything on one board.
+          </p>
+          <div class="next-links">
+            <a href="board.html"><strong>Techniques board</strong>Pros · cons · suited contexts — project and fill as groups report</a>
+            <a href="instructor.html"><strong>Instructor sheet</strong>Keys, timing, group assignments</a>
+          </div>`;
+      }
+    }
+
+    function bindOpts(pickKey, revealedKey) {
+      if (state[revealedKey]) return;
+      main.querySelectorAll("[data-opt]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state[pickKey] = btn.getAttribute("data-opt");
+          render();
+        });
+      });
+    }
+
+    back.addEventListener("click", () => {
+      if (state.step > 0) {
+        state.step -= 1;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    next.addEventListener("click", () => {
+      const id = STEPS[state.step];
+      if (id === "q1" && !state.q1Revealed) {
+        state.q1Revealed = true;
+        render();
+        return;
+      }
+      if (id === "q2" && !state.q2Revealed) {
+        state.q2Revealed = true;
+        render();
+        return;
+      }
+      if (id === "bridge") {
+        window.location.href = "board.html";
+        return;
+      }
+      if (state.step < STEPS.length - 1) {
+        state.step += 1;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

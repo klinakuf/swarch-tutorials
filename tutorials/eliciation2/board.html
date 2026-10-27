@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Elicitation techniques board</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --faint: #8a8175;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.45;
+    }
+    ::selection { background: #d5ebe4; }
+    :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    button, textarea, select, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--teal-deep); }
+
+    .top {
+      position: sticky; top: 0; z-index: 3;
+      background: rgba(243, 239, 230, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top-inner {
+      width: min(1200px, calc(100% - 2rem));
+      margin: 0 auto;
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 0.6rem 1rem;
+      padding: 0.75rem 0;
+    }
+    .kicker {
+      margin: 0; font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 700; color: var(--muted);
+    }
+    h1 {
+      margin: 0.15rem 0 0; font-family: var(--serif);
+      font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.02em;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .btn {
+      border-radius: 999px; padding: 0.45rem 0.9rem; font-weight: 700;
+      border: 1.5px solid var(--ink); background: var(--card); font-size: 0.92rem;
+    }
+    .btn.primary { background: var(--ink); color: #fff; }
+    .btn.ghost { border-color: var(--line); color: var(--muted); }
+
+    main {
+      width: min(1200px, calc(100% - 2rem));
+      margin: 0 auto; padding: 1.1rem 0 2.5rem;
+    }
+    .lede {
+      margin: 0 0 1rem; max-width: 46rem; color: var(--muted);
+    }
+    .filter {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem;
+    }
+    .chip {
+      border-radius: 999px; padding: 0.35rem 0.75rem; font-weight: 700;
+      font-size: 0.88rem; border: 1.5px solid var(--line); background: var(--card);
+    }
+    .chip.on {
+      border-color: var(--ink); background: #e5f3ef; color: var(--teal-deep);
+    }
+    .chip .grp {
+      font-weight: 600; color: var(--faint); margin-left: 0.35rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 0.85rem;
+    }
+    .tech {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0.95rem 1rem 1.05rem;
+      display: flex; flex-direction: column; gap: 0.55rem;
+    }
+    .tech.dim { opacity: 0.35; }
+    .tech-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .tech h2 {
+      margin: 0; font-family: var(--serif); font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+    .badge {
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--blue);
+      background: #e0edfa; border-radius: 999px; padding: 0.2rem 0.55rem;
+    }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .field textarea {
+      width: 100%; min-height: 4.2rem; resize: vertical;
+      background: var(--paper); border: 1.5px solid var(--line);
+      border-radius: 10px; padding: 0.5rem 0.65rem;
+    }
+    .field textarea:focus {
+      outline: none; border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+    .meta {
+      display: flex; gap: 0.45rem; align-items: center; margin-top: 0.15rem;
+    }
+    .meta select {
+      background: var(--paper); border: 1.5px solid var(--line);
+      border-radius: 8px; padding: 0.3rem 0.45rem; font-size: 0.9rem;
+    }
+
+    .table-wrap {
+      margin-top: 1.4rem; overflow-x: auto;
+      border: 1px solid var(--line); border-radius: 16px; background: var(--card);
+    }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.95rem;
+    }
+    th, td {
+      text-align: left; vertical-align: top;
+      padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--line);
+    }
+    th {
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); background: #faf7f0;
+    }
+    tr:last-child td { border-bottom: 0; }
+    td.tech-name {
+      font-family: var(--serif); font-weight: 600; white-space: nowrap;
+    }
+    td.empty { color: var(--faint); font-style: italic; }
+
+    .footer-nav {
+      margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
+      color: var(--muted); font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div>
+        <p class="kicker">Software Architecture · University of Stuttgart</p>
+        <h1>Elicitation techniques board</h1>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+        <button type="button" class="btn ghost" id="sampleBtn">Load sample answers</button>
+        <button type="button" class="btn" id="exportBtn">Export JSON</button>
+        <button type="button" class="btn" id="importBtn">Import JSON</button>
+        <button type="button" class="btn primary" id="printBtn">Print / PDF</button>
+        <input type="file" id="fileIn" accept="application/json,.json" hidden>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <p class="lede">
+      Assign one technique per group. They draft <strong>pros</strong>, <strong>cons</strong>, and a
+      <strong>suited context</strong>. Scribe into the cards (or import JSON). The summary table below is what you project for the debrief.
+      Introspection and hard-data analysis were last week — they stay on the board as already practiced.
+    </p>
+
+    <div class="filter" id="filter" aria-label="Focus one technique"></div>
+    <div class="grid" id="grid"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Technique</th>
+            <th>Group</th>
+            <th>Pros</th>
+            <th>Cons</th>
+            <th>Best suited context</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="footer-nav">
+      <a href="index.html">← Recap &amp; checks</a>
+      <a href="instructor.html">Instructor sheet</a>
+      <a href="../specification/">Later: specification tutorial</a>
+    </div>
+  </main>
+
+  <script>
+    const TECHNIQUES = [
+      { id: "interviews", name: "Interviews", practiced: false },
+      { id: "workshops", name: "Workshops", practiced: false },
+      { id: "observation", name: "Observation / site visit", practiced: false },
+      { id: "surveys", name: "Surveys / questionnaires", practiced: false },
+      { id: "documents", name: "Document analysis", practiced: false },
+      { id: "prototyping", name: "Prototyping", practiced: false },
+      { id: "introspection", name: "Introspection", practiced: true },
+      { id: "harddata", name: "Hard data / ground truth", practiced: true },
+    ];
+
+    const GROUPS = ["—", "G1", "G2", "G3", "G4", "G5", "G6", "All"];
+
+    const SAMPLE = {
+      interviews: {
+        group: "G1",
+        pros: "Depth; follow-up questions; uncovers tacit goals and politics.",
+        cons: "Slow; interviewer bias; hard to scale; one voice ≠ all stakeholders.",
+        context: "Early discovery with a few critical stakeholders; ambiguous domain.",
+      },
+      workshops: {
+        group: "G2",
+        pros: "Shared understanding fast; negotiation in the room; decisions visible.",
+        cons: "Dominant voices; facilitation cost; scheduling many people.",
+        context: "Cross-role alignment; conflict of objectives already suspected.",
+      },
+      observation: {
+        group: "G3",
+        pros: "Sees actual work, not claimed process; finds workarounds and pain.",
+        cons: "Hawthorne effect; time-consuming; may miss rare but critical events.",
+        context: "Operational / admin workflows where “as said” ≠ “as done”.",
+      },
+      surveys: {
+        group: "G4",
+        pros: "Reach many people; comparable answers; cheap to distribute.",
+        cons: "Shallow; poor for “why”; wording bias; low response.",
+        context: "Validate frequency of a known pain across a large population.",
+      },
+      documents: {
+        group: "G5",
+        pros: "Written constraints, SLAs, laws, legacy interfaces; little meeting cost.",
+        cons: "Outdated docs; silent about real practice; legal prose ≠ user need.",
+        context: "Regulated domains; integrating with existing systems and policies.",
+      },
+      prototyping: {
+        group: "G6",
+        pros: "Makes abstract needs concrete; early feedback; reveals usability gaps.",
+        cons: "Users fixate on UI; sunk-cost on throwaways; can skip problem analysis.",
+        context: "Interaction-heavy features once problem space is roughly scoped.",
+      },
+      introspection: {
+        group: "All",
+        pros: "Instant; no access barriers; good for first hypotheses.",
+        cons: "Our solutions masquerade as requirements; echo chamber.",
+        context: "Warm-up only — must be checked against other sources.",
+      },
+      harddata: {
+        group: "All",
+        pros: "Independent of one speaker; locates measurable conditions.",
+        cons: "Does not pick the feature; easy to over-fit a solution to a count.",
+        context: "When logs, tickets, or counts can challenge stakeholder claims.",
+      },
+    };
+
+    const STORE_KEY = "sad-techniques-board-v1";
+    let focus = "all";
+    let data = load();
+
+    function blank() {
+      const o = {};
+      TECHNIQUES.forEach((t) => {
+        o[t.id] = { group: "—", pros: "", cons: "", context: "" };
+      });
+      return o;
+    }
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return blank();
+        return { ...blank(), ...JSON.parse(raw) };
+      } catch {
+        return blank();
+      }
+    }
+
+    function save() {
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+      renderTable();
+    }
+
+    function renderFilter() {
+      const el = document.getElementById("filter");
+      el.innerHTML = [
+        `<button type="button" class="chip ${focus === "all" ? "on" : ""}" data-f="all">All</button>`,
+        ...TECHNIQUES.map((t) => {
+          const g = data[t.id].group;
+          return `<button type="button" class="chip ${focus === t.id ? "on" : ""}" data-f="${t.id}">${t.name}${g !== "—" ? `<span class="grp">${g}</span>` : ""}</button>`;
+        }),
+      ].join("");
+      el.querySelectorAll("[data-f]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          focus = btn.getAttribute("data-f");
+          render();
+        });
+      });
+    }
+
+    function renderCards() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = TECHNIQUES.map((t) => {
+        const row = data[t.id];
+        const dim = focus !== "all" && focus !== t.id ? "dim" : "";
+        const groupOpts = GROUPS.map(
+          (g) => `<option value="${g}" ${row.group === g ? "selected" : ""}>${g}</option>`
+        ).join("");
+        return `
+          <article class="tech ${dim}" data-id="${t.id}">
+            <div class="tech-head">
+              <h2>${t.name}</h2>
+              ${t.practiced ? '<span class="badge">Last week</span>' : ""}
+            </div>
+            <div class="meta">
+              <label class="sr" for="g-${t.id}">Group</label>
+              <select id="g-${t.id}" data-field="group">${groupOpts}</select>
+            </div>
+            <div class="field">
+              <label for="p-${t.id}">Pros</label>
+              <textarea id="p-${t.id}" data-field="pros" placeholder="What this technique buys you…">${escapeAttr(row.pros)}</textarea>
+            </div>
+            <div class="field">
+              <label for="c-${t.id}">Cons</label>
+              <textarea id="c-${t.id}" data-field="cons" placeholder="Where it misleads or costs…">${escapeAttr(row.cons)}</textarea>
+            </div>
+            <div class="field">
+              <label for="x-${t.id}">Best suited context</label>
+              <textarea id="x-${t.id}" data-field="context" placeholder="When this is the right first move…">${escapeAttr(row.context)}</textarea>
+            </div>
+          </article>`;
+      }).join("");
+
+      grid.querySelectorAll("textarea, select").forEach((el) => {
+        const id = el.closest(".tech").getAttribute("data-id");
+        const field = el.getAttribute("data-field");
+        const handler = () => {
+          data[id][field] = el.value;
+          save();
+          renderFilter();
+        };
+        el.addEventListener("input", handler);
+        el.addEventListener("change", handler);
+      });
+    }
+
+    function escapeAttr(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function cell(text) {
+      if (!text || !String(text).trim()) return '<td class="empty">—</td>';
+      return `<td>${escapeAttr(text).replace(/\n/g, "<br>")}</td>`;
+    }
+
+    function renderTable() {
+      const body = document.getElementById("tbody");
+      body.innerHTML = TECHNIQUES.map((t) => {
+        const row = data[t.id];
+        return `<tr>
+          <td class="tech-name">${t.name}</td>
+          <td>${row.group === "—" ? "—" : row.group}</td>
+          ${cell(row.pros)}
+          ${cell(row.cons)}
+          ${cell(row.context)}
+        </tr>`;
+      }).join("");
+    }
+
+    function render() {
+      renderFilter();
+      renderCards();
+      renderTable();
+    }
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if (confirm("Clear all board entries?")) {
+        data = blank();
+        save();
+        render();
+      }
+    });
+
+    document.getElementById("sampleBtn").addEventListener("click", () => {
+      data = { ...blank(), ...SAMPLE };
+      save();
+      render();
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "elicitation-techniques-board.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      document.getElementById("fileIn").click();
+    });
+
+    document.getElementById("fileIn").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          data = { ...blank(), ...JSON.parse(reader.result) };
+          save();
+          render();
+        } catch {
+          alert("Could not parse that JSON file.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    render();
+  </script>
+</body>
+</html>

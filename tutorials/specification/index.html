@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Requirement specification · Artifacts</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --faint: #8a8175;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    ::selection { background: #d5ebe4; }
+    :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    button, textarea, select, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--teal-deep); }
+
+    .wrap {
+      width: min(960px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 1.6rem 0 3.5rem;
+    }
+    .kicker {
+      margin: 0; font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 700; color: var(--muted);
+    }
+    h1 {
+      font-family: var(--serif); font-weight: 600;
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
+      letter-spacing: -0.03em; line-height: 1.08;
+      margin: 0.35rem 0 0.6rem;
+    }
+    h2 {
+      font-family: var(--serif); font-size: 1.45rem; font-weight: 600;
+      letter-spacing: -0.02em; margin: 1.6rem 0 0.55rem;
+    }
+    .lede { max-width: 42rem; margin: 0 0 1.1rem; }
+    .aside { color: var(--muted); font-size: 0.98rem; }
+
+    .criteria {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.55rem;
+      margin: 0 0 1.2rem;
+    }
+    .crit {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 12px; padding: 0.7rem 0.8rem;
+    }
+    .crit strong {
+      display: block; font-size: 0.72rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--teal-deep); margin-bottom: 0.2rem;
+    }
+    .crit span { font-size: 0.95rem; line-height: 1.35; }
+
+    .spectrum {
+      display: grid; gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin: 0 0 1.4rem;
+    }
+    .spec-step {
+      background: var(--card); border: 1.5px solid var(--line);
+      border-radius: 14px; padding: 0.8rem 0.9rem;
+    }
+    .spec-step .n {
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--blue);
+    }
+    .spec-step p { margin: 0.35rem 0 0; font-family: var(--serif); font-size: 1.05rem; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 16px; padding: 1rem 1.1rem 1.15rem;
+      margin: 0 0 1rem;
+    }
+    .bad {
+      font-family: var(--serif); font-size: 1.15rem; line-height: 1.4;
+      margin: 0 0 0.75rem; padding-left: 0.85rem;
+      border-left: 3px solid var(--rust);
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0 0 0.75rem; }
+    .tag {
+      font-size: 0.8rem; font-weight: 700; border-radius: 999px;
+      padding: 0.2rem 0.55rem; background: #fce8e0; color: var(--rust);
+      border: 1px solid #e8b4a0;
+    }
+    .field { margin: 0.65rem 0 0; }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .field textarea, .field input, .field select {
+      width: 100%; background: var(--paper); border: 1.5px solid var(--line);
+      border-radius: 10px; padding: 0.55rem 0.7rem;
+    }
+    .field textarea { min-height: 4.5rem; resize: vertical; }
+    .row2 {
+      display: grid; gap: 0.65rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .volere {
+      display: grid; gap: 0.75rem;
+    }
+    .volere .panel h3 {
+      margin: 0 0 0.5rem; font-family: var(--serif); font-size: 1.2rem;
+    }
+    .btn {
+      border-radius: 999px; padding: 0.5rem 1rem; font-weight: 700;
+      border: 1.5px solid var(--ink); background: var(--ink); color: #fff;
+      margin-top: 0.75rem;
+    }
+    .btn.ghost { background: var(--card); color: var(--ink); }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+
+    .reveal {
+      margin-top: 0.75rem; padding: 0.85rem 0.95rem;
+      background: #e5f3ef; border: 1px solid #b7d9d1; border-radius: 12px;
+    }
+    .reveal[hidden] { display: none !important; }
+    .nav {
+      margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 1rem;
+      color: var(--muted); font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">Software Architecture · University of Stuttgart</p>
+    <h1>Specification artifacts</h1>
+    <p class="lede">
+      Elicitation found sources and conflicts. Specification makes a requirement
+      <em>usable</em>: one interpretation, testable, ranked, traceable. Use the campus / PayFlow examples as clay.
+    </p>
+
+    <h2>Characteristics of a good requirement</h2>
+    <div class="criteria">
+      <div class="crit"><strong>Correct</strong><span>Reflects a real need</span></div>
+      <div class="crit"><strong>Verifiable</strong><span>Measurable / testable</span></div>
+      <div class="crit"><strong>Unambiguous</strong><span>One interpretation</span></div>
+      <div class="crit"><strong>Complete</strong><span>FR + NFR + inputs</span></div>
+      <div class="crit"><strong>Consistent</strong><span>No contradictions</span></div>
+      <div class="crit"><strong>Ranked</strong><span>Importance / urgency</span></div>
+      <div class="crit"><strong>Traceable</strong><span>To design &amp; tests</span></div>
+      <div class="crit"><strong>Modifiable</strong><span>Structured, non-redundant</span></div>
+    </div>
+
+    <h2>Specification spectrum</h2>
+    <div class="spectrum" aria-label="From soft to hard">
+      <div class="spec-step"><div class="n">Soft</div><p>Goal / epic<br>“Students miss fewer exams.”</p></div>
+      <div class="spec-step"><div class="n">User story</div><p>As a … I want … so that …</p></div>
+      <div class="spec-step"><div class="n">Shall statement</div><p>The system shall … under …</p></div>
+      <div class="spec-step"><div class="n">Harder</div><p>Acceptance criteria / Volere fields / formal constraints</p></div>
+    </div>
+
+    <h2>Artifact A · Diagnose &amp; rewrite</h2>
+    <p class="aside">Pairs: mark which quality attributes fail, then rewrite as a shall statement + one acceptance check.</p>
+
+    <div class="panel" data-ex="payflow">
+      <p class="bad">R1.1 — Users should be able to log in to the app using their credentials and the system should keep them safe.</p>
+      <div class="tags">
+        <span class="tag">ambiguous (“safe”)</span>
+        <span class="tag">two requirements glued</span>
+        <span class="tag">not verifiable as written</span>
+      </div>
+      <div class="field">
+        <label for="r1">Your rewrite (shall + acceptance)</label>
+        <textarea id="r1" placeholder="The system shall …&#10;Acceptance: …"></textarea>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn ghost" data-reveal="r1">Show a reasonable rewrite</button>
+      </div>
+      <div class="reveal" id="reveal-r1" hidden>
+        <strong>Example split.</strong><br>
+        FR: The system shall authenticate a user with email and password before granting access to account data.<br>
+        NFR: The system shall store passwords only as salted hashes (e.g. Argon2/bcrypt); plaintext passwords shall never be logged.<br>
+        Acceptance: Given a valid credential pair, access is granted within 2s; given an invalid pair, access is denied and no session is created.
+      </div>
+    </div>
+
+    <div class="panel" data-ex="moodle">
+      <p class="bad">R2.1 — Teachers should be able to give grades to students and students should be able to see how they are doing in the course.</p>
+      <div class="tags">
+        <span class="tag">two stakeholders, two capabilities</span>
+        <span class="tag">“how they are doing” vague</span>
+      </div>
+      <div class="field">
+        <label for="r2">Your rewrite</label>
+        <textarea id="r2" placeholder="Split into two shalls…"></textarea>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn ghost" data-reveal="r2">Show a reasonable rewrite</button>
+      </div>
+      <div class="reveal" id="reveal-r2" hidden>
+        <strong>Example.</strong><br>
+        R-T: A teacher shall assign a numeric grade (0–100) to an enrolled student for a graded item.<br>
+        R-S: An enrolled student shall view their own grades for each graded item in a course, updated within 5 minutes of a teacher save.<br>
+        Acceptance: Student A never sees Student B’s grades; teacher change is visible to the student after refresh within the SLA.
+      </div>
+    </div>
+
+    <div class="panel" data-ex="exams">
+      <p class="bad">From last week’s introspection: “Send a reminder 24 hours before the exam.”</p>
+      <div class="tags">
+        <span class="tag">solution, not problem</span>
+        <span class="tag">channel unspecified</span>
+        <span class="tag">whose clock?</span>
+      </div>
+      <div class="field">
+        <label for="r3">Problem-space shall + optional solution requirement</label>
+        <textarea id="r3" placeholder="Problem: …&#10;If we choose reminders: …"></textarea>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn ghost" data-reveal="r3">Show a reasonable rewrite</button>
+      </div>
+      <div class="reveal" id="reveal-r3" hidden>
+        <strong>Problem-space first.</strong><br>
+        The system shall notify each registered examinee of the definitive exam time and room at least 24 hours before the scheduled start, using the contact channel on file.<br>
+        Acceptance: If room or time changes within that window, a second notification is sent within 15 minutes of the change being saved.<br>
+        <em>Note:</em> “reminder” is one mechanism; the requirement states the information obligation.
+      </div>
+    </div>
+
+    <h2>Artifact B · Volere-lite card</h2>
+    <p class="aside">One requirement per card. Keep description short; put measurability in Fit criterion.</p>
+
+    <div class="volere" id="volere">
+      <div class="panel">
+        <h3>Requirement card</h3>
+        <div class="row2">
+          <div class="field">
+            <label for="vid">ID</label>
+            <input id="vid" placeholder="REQ-12">
+          </div>
+          <div class="field">
+            <label for="vtype">Type</label>
+            <select id="vtype">
+              <option>Functional</option>
+              <option>Non-functional / quality</option>
+              <option>Constraint</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="vdesc">Description (shall…)</label>
+          <textarea id="vdesc" placeholder="The system shall…"></textarea>
+        </div>
+        <div class="field">
+          <label for="vrational">Rationale (why / source)</label>
+          <textarea id="vrational" placeholder="Stakeholder / hard-data / document…"></textarea>
+        </div>
+        <div class="field">
+          <label for="vfit">Fit criterion (testable)</label>
+          <textarea id="vfit" placeholder="Measure, threshold, or acceptance scenario"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="vpri">Priority</label>
+            <select id="vpri">
+              <option>Must</option>
+              <option>Should</option>
+              <option>Could</option>
+              <option>Won’t (this release)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="vorigin">Origin</label>
+            <input id="vorigin" placeholder="Exam office / counts / workshop G2">
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="saveCard">Save card to list</button>
+          <button type="button" class="btn ghost" id="exportCards">Export cards JSON</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Saved cards</h3>
+        <div id="cardList" class="aside">None yet — fill the form and save.</div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <a href="../eliciation2/board.html">← Elicitation techniques board</a>
+      <a href="instructor.html">Instructor sheet</a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-reveal]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = "reveal-" + btn.getAttribute("data-reveal");
+        const box = document.getElementById(id);
+        box.hidden = !box.hidden;
+        btn.textContent = box.hidden ? "Show a reasonable rewrite" : "Hide rewrite";
+      });
+    });
+
+    const KEY = "sad-volere-cards-v1";
+    let cards = [];
+    try {
+      cards = JSON.parse(localStorage.getItem(KEY) || "[]");
+    } catch {
+      cards = [];
+    }
+
+    function renderCards() {
+      const el = document.getElementById("cardList");
+      if (!cards.length) {
+        el.textContent = "None yet — fill the form and save.";
+        el.className = "aside";
+        return;
+      }
+      el.className = "";
+      el.innerHTML = cards
+        .map(
+          (c, i) => `<article style="border-top:1px solid var(--line);padding:0.7rem 0">
+            <strong>${escape(c.id || "—")}</strong> · ${escape(c.type)} · ${escape(c.priority)}
+            <div style="font-family:var(--serif);margin:0.25rem 0">${escape(c.description)}</div>
+            <div class="aside" style="margin:0">Fit: ${escape(c.fit || "—")} · Origin: ${escape(c.origin || "—")}</div>
+            <button type="button" class="btn ghost" data-del="${i}" style="margin-top:0.4rem">Remove</button>
+          </article>`
+        )
+        .join("");
+      el.querySelectorAll("[data-del]").forEach((b) => {
+        b.addEventListener("click", () => {
+          cards.splice(Number(b.getAttribute("data-del")), 1);
+          localStorage.setItem(KEY, JSON.stringify(cards));
+          renderCards();
+        });
+      });
+    }
+
+    function escape(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    document.getElementById("saveCard").addEventListener("click", () => {
+      cards.push({
+        id: document.getElementById("vid").value.trim(),
+        type: document.getElementById("vtype").value,
+        description: document.getElementById("vdesc").value.trim(),
+        rationale: document.getElementById("vrational").value.trim(),
+        fit: document.getElementById("vfit").value.trim(),
+        priority: document.getElementById("vpri").value,
+        origin: document.getElementById("vorigin").value.trim(),
+      });
+      localStorage.setItem(KEY, JSON.stringify(cards));
+      renderCards();
+    });
+
+    document.getElementById("exportCards").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(cards, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "requirement-cards.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    renderCards();
+  </script>
+</body>
+</html>

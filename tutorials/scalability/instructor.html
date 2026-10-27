@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Instructor sheet · Campus peak</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --card: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --line: #ddd4c6;
+      --teal: #0f766e;
+      --teal-deep: #115e59;
+      --blue: #1e40af;
+      --rust: #9a3412;
+      --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #fff 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    ::selection { background: #d5ebe4; }
+    a { color: var(--teal-deep); }
+    .wrap {
+      width: min(820px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 2.2rem 0 4rem;
+    }
+    .kicker {
+      margin: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(2.1rem, 5vw, 3rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0.35rem 0 0.6rem;
+    }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.65rem;
+    }
+    .lede { font-size: 1.12rem; max-width: 40rem; margin: 0 0 1.2rem; }
+    .private {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--rust);
+      border-radius: 0 12px 12px 0;
+      padding: 0.8rem 1rem;
+      margin: 0 0 1.4rem;
+    }
+    .times {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.6rem;
+    }
+    .times li {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.28rem 0.7rem;
+      font-size: 0.92rem;
+    }
+    .beat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.15rem 1.2rem 1rem;
+      margin: 0 0 1rem;
+    }
+    .beat-kicker {
+      margin: 0 0 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+    }
+    .say, .listen, .land { margin: 0.4rem 0 0; }
+    .say { color: var(--muted); font-size: 0.95rem; }
+    .listen strong, .land strong { font-weight: 700; }
+    .map {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem 1.15rem 1.1rem;
+      margin: 0 0 1.1rem;
+    }
+    .map ul { margin: 0.35rem 0 0; padding-left: 1.15rem; }
+    .map li { margin: 0.3rem 0; }
+    .answers {
+      background: #e5f3ef;
+      border: 1px solid #b7d9d1;
+      border-radius: 16px;
+      padding: 1rem 1.15rem 1.1rem;
+      margin: 0 0 1.1rem;
+    }
+    .answers ul { margin: 0.35rem 0 0; padding-left: 1.15rem; }
+    .answers li { margin: 0.35rem 0; }
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 1.5rem 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">Cloud Computing · Week 2 · Facilitator</p>
+    <h1>Instructor sheet · Campus peak</h1>
+    <p class="lede">
+      Project the <a href="index.html">student page</a>. This sheet is private:
+      timing, answer key, and how each step maps to the Week 2 lecture.
+      The AWS live demo stays on the lecture slides — this lab does not replace it.
+    </p>
+
+    <div class="private">
+      <strong>Slot:</strong> Block 4 · Short apply (~18:35–18:55) · 15–20 minutes · pairs<br>
+      <strong>Deliverable:</strong> scale strategy + LB/health + autoscaling sketch + one risk
+    </div>
+
+    <ul class="times" aria-label="Minute plan">
+      <li>0–2 · Scenario</li>
+      <li>2–5 · Scale</li>
+      <li>5–9 · LB &amp; health</li>
+      <li>9–14 · Autoscaling</li>
+      <li>14–16 · Risk</li>
+      <li>16–19 · Reveal</li>
+    </ul>
+
+    <div class="beat">
+      <p class="beat-kicker">0–2 · Scenario</p>
+      <p class="say">Say: “Same campus registration peak as on the slides. Demand is not steady.”</p>
+      <p class="listen"><strong>Listen for:</strong> students naming last year’s single-VM timeout.</p>
+      <p class="land"><strong>Land:</strong> three one-liners (scalability / elasticity / availability) are reminders only — do not re-teach.</p>
+    </div>
+
+    <div class="beat">
+      <p class="beat-kicker">2–5 · Scale</p>
+      <p class="say">Say: “Vertical or horizontal — defend it in one sentence.”</p>
+      <p class="listen"><strong>Listen for:</strong> “bigger machine” vs “more machines behind a balancer.”</p>
+      <p class="land"><strong>Press if needed:</strong> “Where does session state live?” Horizontal without disposable replicas is a trap.</p>
+    </div>
+
+    <div class="beat">
+      <p class="beat-kicker">5–9 · LB &amp; health</p>
+      <p class="say">Say: “Toggle ‘fail health’ — what should the LB do?”</p>
+      <p class="listen"><strong>Listen for:</strong> drain / stop sending traffic, not “delete DNS.”</p>
+      <p class="land"><strong>Land:</strong> health checks turn redundancy into availability. Prefer ready-for-traffic over “port open.”</p>
+    </div>
+
+    <div class="beat">
+      <p class="beat-kicker">9–14 · Autoscaling</p>
+      <p class="say">Say: “Metric, min/desired/max, cooldown — that is the whole policy sketch.”</p>
+      <p class="listen"><strong>Listen for:</strong> why CPU might be a bad proxy during DB wait; why min ≥ 2.</p>
+      <p class="land"><strong>Land:</strong> observe → decide → act; cooldown fights thrashing; max is a cost cap.</p>
+    </div>
+
+    <div class="beat">
+      <p class="beat-kicker">14–16 · Risk</p>
+      <p class="say">Say: “One risk only — the one most likely in the twenty-minute peak.”</p>
+      <p class="listen"><strong>Gold answers:</strong> sticky/local state, single DB writer, thrashing, unbounded max.</p>
+    </div>
+
+    <div class="beat">
+      <p class="beat-kicker">16–19 · Reveal</p>
+      <p class="say">Say: “Reasonable, not unique. Hold your summary next to the green box.”</p>
+      <p class="land"><strong>Close with five ideas</strong> (below), then hand off to the AWS demo block if that is next on the agenda.</p>
+    </div>
+
+    <div class="answers">
+      <h2>Possible answer key</h2>
+      <ul>
+        <li><strong>Scale:</strong> horizontal scale-out of a preferably <em>stateless</em> web tier.</li>
+        <li><strong>LB:</strong> in front of N identical instances; health check on <code>/health</code> meaning ready for traffic (deps OK), not only process listening.</li>
+        <li><strong>Policy:</strong> RPS or latency preferred over CPU for this peak; min 2 / desired 2 / max capped; cooldown ~1–3 min so the open does not flap capacity.</li>
+        <li><strong>Risk:</strong> ticket DB as bottleneck, or sticky sessions defeating scale-out — either is excellent.</li>
+      </ul>
+    </div>
+
+    <div class="map">
+      <h2>Map to Week 2 takeaways</h2>
+      <ul>
+        <li><strong>Scalability</strong> is about handling more load; <strong>elasticity</strong> is about adapting capacity as load changes. → Steps 1–2 &amp; 4</li>
+        <li><strong>Horizontal scale-out</strong> needs disposable, preferably <strong>stateless</strong> replicas behind a <strong>load balancer</strong>. → Steps 2–3</li>
+        <li><strong>Health checks</strong> turn redundancy into availability. → Step 3 (fail toggle)</li>
+        <li><strong>Autoscaling</strong> is a control loop: metric → policy → cooldown → min/desired/max (and a cost cap). → Step 4</li>
+        <li>Cloud APIs make this practical because capacity is a <strong>pooled, on-demand resource</strong> (NIST). → Bridge from lecture; demo shows mechanisms</li>
+      </ul>
+    </div>
+
+    <div class="map">
+      <h2>Quick check (if you have 2 spare minutes)</h2>
+      <ul>
+        <li>Difference between scalability and elasticity in one sentence?</li>
+        <li>One reason horizontal scaling fails for a stateful app?</li>
+        <li>What does a load balancer use to stop sending traffic to a bad instance?</li>
+        <li>Three ingredients of an autoscaling policy?</li>
+        <li>Why is a single VM behind a public IP not enough for high availability?</li>
+      </ul>
+    </div>
+
+    <p class="footer-note">
+      Sources for definitions on the lecture slides: NIST SP 800-145; AWS ELB / Auto Scaling docs;
+      SRE book (SLI/SLO/SLA). This HTML lab cites concepts only — keep formal citations on the deck.
+    </p>
+  </div>
+</body>
+</html>
